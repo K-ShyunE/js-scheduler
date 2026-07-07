@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>계정 상태 - Luminous Broadcast</title>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f2f0ef",
+                        "on-tertiary-container": "#003522",
+                        "tertiary": "#006c48",
+                        "surface-bright": "#fbf9f8",
+                        "on-tertiary-fixed": "#002113",
+                        "primary-fixed": "#ffdad8",
+                        "surface": "#fbf9f8",
+                        "outline-variant": "#debfbe",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#5f6368",
+                        "inverse-surface": "#303030",
+                        "outline": "#8b7170",
+                        "surface-variant": "#e4e2e1",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "error-container": "#ffdad6",
+                        "background": "#fbf9f8",
+                        "surface-container-highest": "#e4e2e1",
+                        "on-primary-container": "#62000e",
+                        "on-primary": "#ffffff",
+                        "on-background": "#1b1c1b",
+                        "inverse-primary": "#ffb3b0",
+                        "on-surface": "#1b1c1b",
+                        "surface-container-low": "#f5f3f2",
+                        "border-subtle": "#E5E1E0",
+                        "surface-container-high": "#e9e8e7",
+                        "tertiary-fixed-dim": "#58dea3",
+                        "broadcast-blue": "#1A73E8",
+                        "text-heading": "#202124",
+                        "secondary-container": "#dde0e6",
+                        "surface-container": "#efedec",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "surface-tint": "#a93539",
+                        "surface-card": "#FFFFFF",
+                        "surface-main": "#FBF9F8",
+                        "on-secondary-fixed": "#181c20",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#ffb3b0",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#f06a6a",
+                        "tertiary-fixed": "#77fbbd",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#00aa74",
+                        "on-primary-fixed-variant": "#881d24",
+                        "secondary-fixed-dim": "#c3c7cc",
+                        "on-error": "#ffffff",
+                        "secondary": "#5b5f64",
+                        "on-primary-fixed": "#410006",
+                        "text-body": "#5F6368",
+                        "primary": "#a93539",
+                        "secondary-fixed": "#dfe3e8",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#dbdad9",
+                        "on-surface-variant": "#574140"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-page": "2rem",
+                        "gutter": "1.5rem",
+                        "row-height-dense": "40px",
+                        "container-max-width": "1600px",
+                        "row-height-standard": "56px",
+                        "sidebar-width": "260px"
+                    },
+                    "fontFamily": {
+                        "title-sm": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "label-caps": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "data-tabular": ["Inter"]
+                    },
+                    "fontSize": {
+                        "title-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #FBF9F8;
+            color: #1b1c1b;
+        }
+        .sidebar-active-indicator {
+            width: 4px;
+            height: 100%;
+            background-color: #F06A6A;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        /* Custom Scrollbar for Dense Views */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e5e1e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d1cdcc;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- Top AppBar (from JSON instructions) -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface dark:bg-on-surface border-b border-border-subtle dark:border-outline flex justify-between items-center w-full px-gutter h-row-height-standard transition-colors duration-200">
+<div class="flex items-center gap-4">
+<h1 class="font-display-lg text-display-lg text-primary dark:text-primary-fixed font-extrabold tracking-tight">Luminous Broadcast</h1>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest p-2 rounded transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest p-2 rounded transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest p-2 rounded transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-subtle">
+<img class="w-full h-full object-cover" data-alt="Close up professional portrait of a broadcast operations manager in a high-tech studio environment. Soft corporate lighting with a focus on friendly, authoritative expression. The background shows blurred broadcast monitors with warm red and cool white accents to match the Luminous brand aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9XZPX5FuXxPqAlOX6XDgx0_RGhm_ftnUR827iP92GkZRYTtxGavyR2BCKjOmruulYYG2HRb6AEE8yqZYx-LvJq-7RkBvhbg_YEvnm3RCvLA2LYfrWmn4fNDsT6kDm2CJzseTBidwBS3RexkkdcBMexXmBvQA6EGhOo8jEsPe6xaXpZdMF748h9oVJdAfSQd9uf-CC0csm3V-w843E1Ogfi1whKK8mm_kMBIrzJThHKi-KxlUwhIIZdQ"/>
+</div>
+</div>
+</header>
+<!-- Side Navigation (from JSON instructions) -->
+<aside class="fixed left-0 top-0 h-full w-sidebar-width bg-surface-main dark:bg-on-surface border-r border-border-subtle dark:border-outline flex flex-col pt-24 pb-margin-page z-40 transition-all duration-200 ease-in-out">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" data-icon="settings_input_antenna">settings_input_antenna</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface">Broadcast Ops</div>
+<div class="text-xs text-secondary opacity-70">Enterprise Management</div>
+</div>
+</div>
+</div>
+<nav class="flex-1">
+<ul class="space-y-1">
+<li>
+<a class="relative flex items-center px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="font-title-sm text-title-sm">대시보드</span>
+</a>
+</li>
+<li>
+<a class="relative flex items-center px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="calendar_today">calendar_today</span>
+<span class="font-title-sm text-title-sm">일정 등록</span>
+</a>
+</li>
+<li>
+<a class="relative flex items-center px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="video_library">video_library</span>
+<span class="font-title-sm text-title-sm">검색 목록</span>
+</a>
+</li>
+<li>
+<a class="relative flex items-center px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="handshake">handshake</span>
+<span class="font-title-sm text-title-sm">홈쇼핑 업체 관리</span>
+</a>
+</li>
+<li>
+<!-- Active State: '계정 상태' mapping -->
+<a class="relative flex items-center px-6 py-3 border-l-4 border-primary bg-primary/5 text-primary font-bold transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="account_circle" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+<span class="font-title-sm text-title-sm">계정 상태</span>
+</a>
+</li>
+</ul>
+</nav>
+<div class="mt-auto px-6 space-y-1 border-t border-border-subtle pt-6">
+<a class="flex items-center py-2 text-secondary hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="contact_support">contact_support</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+<a class="flex items-center py-2 text-secondary hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-sidebar-width pt-24 p-margin-page max-w-[1600px]">
+<!-- Page Header -->
+<div class="mb-8 flex justify-between items-end">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-surface mb-2">계정 상태 관리</h2>
+<p class="text-secondary font-body-md">Google 서비스 연동 및 방송 자동화 데이터를 관리합니다.</p>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 bg-white border border-border-subtle rounded-lg shadow-sm" id="connection-status-global">
+<div class="w-2.5 h-2.5 rounded-full bg-error" id="global-status-dot"></div>
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-widest" id="global-status-text">Disconnected</span>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-gutter">
+<!-- SECTION 1: Google Account Connection (Switchable State) -->
+<div class="col-span-12 lg:col-span-5 flex flex-col gap-gutter">
+<!-- State Container -->
+<div class="bg-white border border-border-subtle rounded-lg overflow-hidden flex flex-col h-full min-h-[400px]" id="account-state-container">
+<!-- DISCONNECTED STATE (Visible by default) -->
+<div class="flex-1 flex flex-col items-center justify-center p-10 text-center" id="state-disconnected">
+<div class="w-20 h-20 bg-surface-container-low rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-[40px] text-secondary/30" data-icon="cloud_off">cloud_off</span>
+</div>
+<h3 class="font-title-sm text-title-sm text-on-surface mb-3">Google 계정이 연결되지 않았습니다</h3>
+<p class="text-secondary text-body-md mb-8 max-w-xs mx-auto">
+                            방송 일정 관리 및 자산 동기화를 위해 Google Drive, Sheets, Calendar 접근 권한이 필요합니다.
+                        </p>
+<button class="flex items-center gap-3 px-8 py-4 bg-[#F06A6A] text-white rounded font-title-sm shadow-sm hover:shadow-md transition-all active:scale-[0.98]" onclick="toggleConnection(true)">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#fff"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#fff"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#fff"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#fff"></path></svg>
+                            Google 계정으로 연결하기
+                        </button>
+</div>
+<!-- CONNECTED STATE (Hidden by default) -->
+<div class="hidden flex-1 flex flex-col" id="state-connected">
+<div class="p-8 border-b border-border-subtle bg-surface-container-lowest">
+<div class="flex items-center justify-between mb-6">
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary font-label-caps text-[10px] rounded-full uppercase">Authenticated</span>
+<button class="text-secondary hover:text-error transition-colors flex items-center gap-1 text-xs" onclick="toggleConnection(false)">
+<span class="material-symbols-outlined text-[16px]" data-icon="logout">logout</span> 연결 해제
+                                </button>
+</div>
+<div class="flex items-center gap-5">
+<div class="relative">
+<div class="w-20 h-20 rounded-full border-2 border-primary-container p-0.5">
+<img class="w-full h-full object-cover rounded-full" data-alt="A clean, minimalist high-quality user profile avatar of a professional in a tech-focused corporate environment. The person is smiling warmly, representing reliable service. The lighting is bright and even, with soft pastel backgrounds that align with the coral and neutral tones of the Luminous Broadcast brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAM0zcqzKbftxi-uPbe0F97a1s2bT_e03ZjXpaKBqzj23yTuUC2i1pm-aq8BCCsoFr4s5SAgbenM8u4V7lR5iDVOu_ZEeUdiwvQr8Viigbw-l2LwF3L6eRqeFHm6ezWLb6MnkAkE-pIJrLCvm6BSaFeOdsaVnqx8vLk8qGGiq9Ah07Cq_qeoKLU3VwVgPxIHTZxw3H7e09JsN6VYyVEDEcEgcAqltOdW2ylIIkt939HMZxAenLobCrwiw"/>
+</div>
+<div class="absolute bottom-0 right-0 w-6 h-6 bg-white border border-border-subtle rounded-full flex items-center justify-center">
+<svg class="w-3.5 h-3.5" viewbox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path></svg>
+</div>
+</div>
+<div>
+<h4 class="font-title-sm text-title-sm text-on-surface">김루미 실장</h4>
+<p class="text-secondary text-body-sm">broadcast.ops@luminous.com</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="flex items-center gap-1 text-[11px] font-medium text-tertiary">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Drive Sync On
+                                        </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sync Breakdown Metrics -->
+<div class="p-8 space-y-6">
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-caps text-label-caps text-secondary uppercase">Storage Usage</span>
+<span class="font-data-tabular text-body-sm">8.4 GB / 15 GB</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full" style="width: 56%"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-surface-container-low border border-border-subtle rounded flex flex-col gap-1">
+<span class="font-label-caps text-[10px] text-secondary uppercase">Connected Apps</span>
+<div class="font-display-lg text-primary">03</div>
+</div>
+<div class="p-4 bg-surface-container-low border border-border-subtle rounded flex flex-col gap-1">
+<span class="font-label-caps text-[10px] text-secondary uppercase">Last Sync</span>
+<div class="font-display-lg text-on-surface">02m</div>
+</div>
+</div>
+<div class="mt-4 p-4 border border-border-subtle border-dashed rounded-lg">
+<h5 class="text-body-sm font-semibold mb-2">접근 권한 범위</h5>
+<ul class="space-y-2">
+<li class="flex items-center gap-2 text-xs text-secondary">
+<span class="material-symbols-outlined text-[14px] text-tertiary" data-icon="check_circle">check_circle</span>
+                                        Google Drive 파일 읽기/쓰기
+                                    </li>
+<li class="flex items-center gap-2 text-xs text-secondary">
+<span class="material-symbols-outlined text-[14px] text-tertiary" data-icon="check_circle">check_circle</span>
+                                        Google Calendar 이벤트 수정 및 삭제
+                                    </li>
+<li class="flex items-center gap-2 text-xs text-secondary">
+<span class="material-symbols-outlined text-[14px] text-tertiary" data-icon="check_circle">check_circle</span>
+                                        Sheets 스프레드시트 관리
+                                    </li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<!-- Atmospheric Element -->
+<div class="flex-1 rounded-lg overflow-hidden relative min-h-[160px] bg-on-surface">
+
+<div class="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-on-surface to-transparent">
+<span class="font-label-caps text-white/60 mb-1 uppercase tracking-tighter">System Health</span>
+<h4 class="text-white font-title-sm">통합 동기화 엔진 작동 중</h4>
+</div>
+</div>
+</div>
+<!-- SECTION 2: Specific Service Configuration (Active only when connected) -->
+<div class="col-span-12 lg:col-span-7 flex flex-col gap-gutter opacity-50 pointer-events-none transition-opacity duration-300" id="service-config-panel">
+<!-- Google Sheets Card -->
+<div class="bg-white border border-border-subtle rounded-lg shadow-sm">
+<div class="p-6 border-b border-border-subtle flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-green-50 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600" data-icon="description">description</span>
+</div>
+<div>
+<h3 class="font-title-sm text-title-sm text-on-surface">Google Sheets 연결</h3>
+<p class="text-xs text-secondary">방송 송출 로그 및 자산 리스트 저장소</p>
+</div>
+</div>
+<span class="px-2 py-0.5 bg-surface-container-high text-secondary text-[10px] font-bold rounded uppercase" id="sheet-badge">Not Linked</span>
+</div>
+<div class="p-6">
+<div class="grid grid-cols-2 gap-gutter mb-6">
+<button class="p-4 border-2 border-primary-container bg-primary/5 rounded-lg text-left transition-all group" id="sheet-tab-new" onclick="switchTab('sheet', 'new')">
+<span class="material-symbols-outlined text-primary mb-2" data-icon="add_circle">add_circle</span>
+<div class="font-body-md font-bold text-on-surface">새 시트 생성</div>
+<p class="text-[11px] text-secondary">새로운 통합 로그 시트를 만듭니다.</p>
+</button>
+<button class="p-4 border border-border-subtle hover:border-primary/50 rounded-lg text-left transition-all" id="sheet-tab-select" onclick="switchTab('sheet', 'select')">
+<span class="material-symbols-outlined text-secondary mb-2 group-hover:text-primary" data-icon="folder_open">folder_open</span>
+<div class="font-body-md font-bold text-on-surface">기존 시트 선택</div>
+<p class="text-[11px] text-secondary">드라이브에서 파일을 검색합니다.</p>
+</button>
+</div>
+<!-- Sub-content: Create New -->
+<div class="space-y-4" id="sheet-content-new">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-caps text-secondary uppercase">Sheet Name</label>
+<div class="flex gap-2">
+<input class="flex-1 border-border-subtle rounded bg-white px-4 py-2 text-body-md focus:border-primary-container focus:ring-1 focus:ring-primary-container transition-all" placeholder="예: 2024_상반기_방송로그" type="text"/>
+<button class="px-6 py-2 bg-primary-container text-white rounded font-body-md hover:opacity-90 transition-opacity">생성</button>
+</div>
+</div>
+</div>
+<!-- Sub-content: Select Existing (Hidden) -->
+<div class="hidden" id="sheet-content-select">
+<div class="relative mb-4">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-[20px]" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 border-border-subtle rounded text-body-md" placeholder="시트 이름 검색..." type="text"/>
+</div>
+<div class="max-h-40 overflow-y-auto border border-border-subtle rounded divide-y divide-border-subtle">
+<div class="p-3 flex items-center gap-3 hover:bg-surface-container-low cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-green-600 text-[18px]" data-icon="description">description</span>
+<span class="text-body-sm flex-1">Broadcast_Schedule_Master_2024</span>
+<span class="text-[10px] text-secondary">Modified 2d ago</span>
+</div>
+<div class="p-3 flex items-center gap-3 hover:bg-surface-container-low cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-green-600 text-[18px]" data-icon="description">description</span>
+<span class="text-body-sm flex-1">Asset_Inventory_V2</span>
+<span class="text-[10px] text-secondary">Modified 5d ago</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Calendar Card -->
+<div class="bg-white border border-border-subtle rounded-lg shadow-sm">
+<div class="p-6 border-b border-border-subtle flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-blue-50 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-broadcast-blue" data-icon="calendar_month">calendar_month</span>
+</div>
+<div>
+<h3 class="font-title-sm text-title-sm text-on-surface">Google Calendar 연결</h3>
+<p class="text-xs text-secondary">방송 편성 및 예약 자동 등록</p>
+</div>
+</div>
+<span class="px-2 py-0.5 bg-surface-container-high text-secondary text-[10px] font-bold rounded uppercase" id="calendar-badge">Not Linked</span>
+</div>
+<div class="p-6">
+<div class="space-y-4">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-caps text-secondary uppercase">Select Calendar Account</label>
+<select class="w-full border-border-subtle rounded bg-white px-4 py-2.5 text-body-md focus:border-primary-container">
+<option>기본 캘린더 (broadcast.ops@luminous.com)</option>
+<option>Luminous Studio Schedule</option>
+<option>+ 새 캘린더 생성...</option>
+</select>
+</div>
+<div class="flex items-center gap-3 p-4 bg-blue-50/50 border border-blue-100 rounded-lg">
+<span class="material-symbols-outlined text-broadcast-blue" data-icon="info">info</span>
+<p class="text-[11px] text-blue-800">연결된 캘린더에 등록된 일정은 시스템 대시보드와 실시간으로 동기화됩니다.</p>
+</div>
+<button class="w-full py-3 border border-primary-container text-primary font-bold rounded hover:bg-primary/5 transition-colors">캘린더 동기화 설정 완료</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Help Section -->
+<footer class="mt-12 pt-8 border-t border-border-subtle flex justify-between items-center text-secondary">
+<div class="text-xs">
+                © 2024 Luminous Broadcast Operations. All rights reserved.
+            </div>
+<div class="flex gap-6 text-xs uppercase font-label-caps tracking-widest">
+<a class="hover:text-primary" href="#">Documentation</a>
+<a class="hover:text-primary" href="#">API Status</a>
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+</div>
+</footer>
+</main>
+<script>
+        function toggleConnection(isConnected) {
+            const disconnectedState = document.getElementById('state-disconnected');
+            const connectedState = document.getElementById('state-connected');
+            const servicePanel = document.getElementById('service-config-panel');
+            const globalDot = document.getElementById('global-status-dot');
+            const globalText = document.getElementById('global-status-text');
+            const sheetBadge = document.getElementById('sheet-badge');
+            const calendarBadge = document.getElementById('calendar-badge');
+
+            if (isConnected) {
+                disconnectedState.classList.add('hidden');
+                connectedState.classList.remove('hidden');
+                servicePanel.classList.remove('opacity-50', 'pointer-events-none');
+                globalDot.classList.replace('bg-error', 'bg-tertiary');
+                globalText.innerText = 'Connected';
+                sheetBadge.classList.replace('bg-surface-container-high', 'bg-tertiary/10');
+                sheetBadge.classList.replace('text-secondary', 'text-tertiary');
+                sheetBadge.innerText = 'Standby';
+                calendarBadge.classList.replace('bg-surface-container-high', 'bg-tertiary/10');
+                calendarBadge.classList.replace('text-secondary', 'text-tertiary');
+                calendarBadge.innerText = 'Standby';
+            } else {
+                disconnectedState.classList.remove('hidden');
+                connectedState.classList.add('hidden');
+                servicePanel.classList.add('opacity-50', 'pointer-events-none');
+                globalDot.classList.replace('bg-tertiary', 'bg-error');
+                globalText.innerText = 'Disconnected';
+                sheetBadge.classList.replace('bg-tertiary/10', 'bg-surface-container-high');
+                sheetBadge.classList.replace('text-tertiary', 'text-secondary');
+                sheetBadge.innerText = 'Not Linked';
+                calendarBadge.classList.replace('bg-tertiary/10', 'bg-surface-container-high');
+                calendarBadge.classList.replace('text-tertiary', 'text-secondary');
+                calendarBadge.innerText = 'Not Linked';
+            }
+        }
+
+        function switchTab(type, mode) {
+            const newTabBtn = document.getElementById(`${type}-tab-new`);
+            const selectTabBtn = document.getElementById(`${type}-tab-select`);
+            const newContent = document.getElementById(`${type}-content-new`);
+            const selectContent = document.getElementById(`${type}-content-select`);
+
+            if (mode === 'new') {
+                newTabBtn.classList.add('border-primary-container', 'bg-primary/5');
+                newTabBtn.classList.remove('border-border-subtle');
+                selectTabBtn.classList.remove('border-primary-container', 'bg-primary/5');
+                selectTabBtn.classList.add('border-border-subtle');
+                newContent.classList.remove('hidden');
+                selectContent.classList.add('hidden');
+            } else {
+                selectTabBtn.classList.add('border-primary-container', 'bg-primary/5');
+                selectTabBtn.classList.remove('border-border-subtle');
+                newTabBtn.classList.remove('border-primary-container', 'bg-primary/5');
+                newTabBtn.classList.add('border-border-subtle');
+                selectContent.classList.remove('hidden');
+                newContent.classList.add('hidden');
+            }
+        }
+    </script>
+</body></html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Luminous Broadcast - Schedule Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1b1c1b",
+                        "broadcast-blue": "#1A73E8",
+                        "surface-main": "#FBF9F8",
+                        "on-primary-container": "#62000e",
+                        "surface-tint": "#a93539",
+                        "outline": "#8b7170",
+                        "surface-container-low": "#f5f3f2",
+                        "primary-container": "#f06a6a",
+                        "surface-card": "#FFFFFF",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e4e2e1",
+                        "tertiary-fixed-dim": "#58dea3",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#303030",
+                        "surface-container-high": "#e9e8e7",
+                        "surface": "#fbf9f8",
+                        "text-heading": "#202124",
+                        "on-tertiary-container": "#003522",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#5f6368",
+                        "secondary": "#5b5f64",
+                        "tertiary": "#006c48",
+                        "surface-container": "#efedec",
+                        "surface-container-highest": "#e4e2e1",
+                        "on-surface-variant": "#574140",
+                        "inverse-on-surface": "#f2f0ef",
+                        "surface-bright": "#fbf9f8",
+                        "background": "#fbf9f8",
+                        "border-subtle": "#E5E1E0",
+                        "on-primary-fixed": "#410006",
+                        "secondary-fixed-dim": "#c3c7cc",
+                        "on-secondary": "#ffffff",
+                        "primary": "#a93539",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#ffb3b0",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "tertiary-container": "#00aa74",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "text-body": "#5F6368",
+                        "surface-dim": "#dbdad9",
+                        "on-surface": "#1b1c1b",
+                        "on-secondary-fixed": "#181c20",
+                        "secondary-container": "#dde0e6",
+                        "primary-fixed": "#ffdad8",
+                        "outline-variant": "#debfbe",
+                        "on-primary-fixed-variant": "#881d24",
+                        "tertiary-fixed": "#77fbbd",
+                        "on-tertiary-fixed": "#002113",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#ffb3b0",
+                        "secondary-fixed": "#dfe3e8",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "row-height-dense": "40px",
+                        "sidebar-width": "260px",
+                        "margin-page": "2rem",
+                        "row-height-standard": "56px",
+                        "container-max-width": "1600px",
+                        "gutter": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Hanken Grotesk"],
+                        "title-sm": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "data-tabular": ["Inter"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "label-caps": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "title-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            user-select: none;
+        }
+        .sidebar-active-bar {
+            position: absolute;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: #F06A6A;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fbf9f8;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e5e1e0;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d1cdcc;
+        }
+    </style>
+</head>
+<body class="bg-surface-main text-on-surface font-body-md overflow-hidden">
+<!-- Side Navigation Shell -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 bg-background border-r border-border-subtle flex flex-col py-6 z-50">
+<div class="px-6 mb-8">
+<h1 class="font-display-lg text-display-lg font-bold text-primary">Luminous Broadcast</h1>
+<p class="text-body-sm text-secondary uppercase tracking-widest mt-1">Management Portal</p>
+</div>
+<button class="mx-6 mb-8 py-3 px-4 bg-primary-container text-on-primary font-bold rounded-lg flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined">add</span>
+            New Broadcast
+        </button>
+<nav class="flex-1 space-y-1"><!-- Active State: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 border-l-4 border-primary bg-primary/5 text-primary font-bold group transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="">대시보드</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined">edit_calendar</span>
+<span class="">일정 등록</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="">검색 목록</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined">store</span>
+<span class="">홈쇼핑 업체 관리</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="">계정 상태</span>
+</a></nav>
+<div class="mt-auto px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] h-screen overflow-y-auto bg-surface-main">
+<!-- Top Navigation Shell -->
+<header class="h-row-height-standard sticky top-0 z-40 bg-surface-card border-b border-border-subtle flex items-center justify-between px-margin-page">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-primary/20 rounded-xl">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl text-body-md focus:ring-0" placeholder="Search broadcasts, channels..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-tertiary bg-tertiary-fixed/10 px-3 py-1.5 rounded-full">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+<span class="font-data-tabular text-body-sm">Google Synced</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-secondary hover:bg-surface-container-highest rounded-xl transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a senior broadcast manager in a modern office, soft lighting, minimalist corporate style, warm coral accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnFo8oHqynfYXurzbTrRwYIVf_0SalChWGY1nDchyLZ6TG69M4Iuwrj-a50sXPsUbGizWily8TQ45g_ovSxLidLkLZVb2RfAeePUPYt8Ff6ecT_rlgsE4Vy_ypdiCtx5bWaGI5TMSrTW_KAntmN8yrsgomHrX3i6yelNh5LL55BTNP24VaVGzi3zvcPstPkBkqitxwTt_8y6UHNhSwezDElmZopot2Nb3ItiKDXNlEWLFIxpf71Ww-Pg">
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-margin-page max-w-[1600px] mx-auto space-y-gutter">
+<!-- Quick Stats Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-surface-card p-6 border border-border-subtle rounded-lg flex flex-col gap-1">
+<span class="text-body-sm text-secondary font-label-caps uppercase">Total Broadcasts</span>
+<span class="text-display-lg font-display-lg text-primary">128</span>
+<div class="flex items-center text-tertiary text-body-sm mt-2">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+<span class="">+12% from last month</span>
+</div>
+</div>
+<div class="bg-surface-card p-6 border border-border-subtle rounded-lg flex flex-col gap-1">
+<span class="text-body-sm text-secondary font-label-caps uppercase">Live Now</span>
+<span class="text-display-lg font-display-lg text-primary">04</span>
+<div class="flex items-center text-primary-container text-body-sm mt-2">
+<span class="inline-block w-2 h-2 rounded-full bg-primary-container mr-2 animate-pulse"></span>
+<span class="text-primary">Monitoring active streams</span>
+</div>
+</div>
+<div class="bg-surface-card p-6 border border-border-subtle rounded-lg flex flex-col gap-1">
+<span class="text-body-sm text-secondary font-label-caps uppercase">Sync Status</span>
+<span class="text-display-lg font-display-lg text-broadcast-blue italic">Perfect</span>
+<div class="flex items-center text-secondary text-body-sm mt-2">
+<span class="material-symbols-outlined text-sm mr-1">history</span>
+<span class="">Last sync: 2m ago</span>
+</div>
+</div>
+<div class="bg-surface-card p-6 border border-border-subtle rounded-lg flex flex-col gap-1 overflow-hidden relative group">
+<div class="relative z-10">
+<span class="text-body-sm text-secondary font-label-caps uppercase">Pending Approval</span>
+<span class="text-display-lg font-display-lg text-on-surface">18</span>
+<button class="mt-2 text-primary font-bold text-body-sm hover:underline flex items-center">
+                            Review items <span class="material-symbols-outlined text-sm ml-1">chevron_right</span>
+</button>
+</div>
+<!-- Subtle background decoration -->
+<div class="absolute -bottom-4 -right-4 text-surface-container-highest opacity-20 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[100px]" style="font-variation-settings: &quot;FILL&quot; 1;">assignment_late</span>
+</div>
+</div>
+</section>
+<!-- Main Schedule Section -->
+<section class="grid grid-cols-1 xl:grid-cols-12 gap-gutter">
+<!-- Schedule List (High Density) -->
+<div class="xl:col-span-8 bg-surface-card border border-border-subtle rounded-lg overflow-hidden flex flex-col">
+<div class="p-4 border-b border-border-subtle flex items-center justify-between">
+<h2 class="font-title-sm text-title-sm">Upcoming Broadcasts</h2>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 border border-border-subtle rounded-lg text-body-sm flex items-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+<span class="">Filter</span>
+</button>
+<div class="flex border border-border-subtle rounded-lg p-0.5">
+<button class="p-1.5 bg-surface-container-high text-primary rounded-md">
+<span class="material-symbols-outlined text-[20px]">format_list_bulleted</span>
+</button>
+<button class="p-1.5 text-secondary hover:bg-surface-container-low rounded-md transition-colors">
+<span class="material-symbols-outlined text-[20px]">calendar_view_month</span>
+</button>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse font-data-tabular">
+<thead>
+<tr class="bg-surface-container border-b border-border-subtle">
+<th class="px-6 py-3 font-label-caps text-secondary uppercase">Status</th>
+<th class="px-6 py-3 font-label-caps text-secondary uppercase">Broadcast Title</th>
+<th class="px-6 py-3 font-label-caps text-secondary uppercase">Channel</th>
+<th class="px-6 py-3 font-label-caps text-secondary uppercase">Time (UTC)</th>
+<th class="px-6 py-3 font-label-caps text-secondary uppercase">Partner</th>
+<th class="px-6 py-3"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<!-- Live Item -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-6 py-4">
+<span class="flex items-center gap-2 text-primary font-bold text-body-sm">
+<span class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(169,53,57,0.5)]"></span>
+                                            LIVE
+                                        </span>
+</td>
+<td class="px-6 py-4 text-on-surface font-semibold">Morning News Prime: East Coast</td>
+<td class="px-6 py-4 text-secondary">Global One HD</td>
+<td class="px-6 py-4 text-secondary">08:00 - 10:00</td>
+<td class="px-6 py-4 text-secondary">Reuters</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Scheduled Item -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-6 py-4">
+<span class="flex items-center gap-2 text-broadcast-blue font-bold text-body-sm">
+<span class="w-2 h-2 rounded-full bg-broadcast-blue"></span>
+                                            SCHEDULED
+                                        </span>
+</td>
+<td class="px-6 py-4 text-on-surface font-semibold">Global Markets Weekly</td>
+<td class="px-6 py-4 text-secondary">BizNet Finance</td>
+<td class="px-6 py-4 text-secondary">10:30 - 11:30</td>
+<td class="px-6 py-4 text-secondary">Internal</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Draft Item -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-6 py-4">
+<span class="flex items-center gap-2 text-secondary font-bold text-body-sm">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+                                            DRAFT
+                                        </span>
+</td>
+<td class="px-6 py-4 text-on-surface font-semibold">Tech Innovations Summit</td>
+<td class="px-6 py-4 text-secondary">FutureStream</td>
+<td class="px-6 py-4 text-secondary">13:00 - 15:00</td>
+<td class="px-6 py-4 text-secondary">Google Cloud</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Scheduled Item -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-6 py-4">
+<span class="flex items-center gap-2 text-broadcast-blue font-bold text-body-sm">
+<span class="w-2 h-2 rounded-full bg-broadcast-blue"></span>
+                                            SCHEDULED
+                                        </span>
+</td>
+<td class="px-6 py-4 text-on-surface font-semibold">Climate Action Documentary</td>
+<td class="px-6 py-4 text-secondary">EcoChannel</td>
+<td class="px-6 py-4 text-secondary">16:00 - 17:30</td>
+<td class="px-6 py-4 text-secondary">National Geo</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Scheduled Item -->
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-6 py-4">
+<span class="flex items-center gap-2 text-broadcast-blue font-bold text-body-sm">
+<span class="w-2 h-2 rounded-full bg-broadcast-blue"></span>
+                                            SCHEDULED
+                                        </span>
+</td>
+<td class="px-6 py-4 text-on-surface font-semibold">Late Night Pulse: Music</td>
+<td class="px-6 py-4 text-secondary">Pulse FM Live</td>
+<td class="px-6 py-4 text-secondary">22:00 - 00:00</td>
+<td class="px-6 py-4 text-secondary">Spotify Events</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-auto p-4 bg-surface-container-low flex items-center justify-between">
+<span class="text-body-sm text-secondary">Showing 1-5 of 128 broadcasts</span>
+<div class="flex gap-2">
+<button class="px-3 py-1 border border-border-subtle rounded bg-surface-card hover:bg-surface-container-high transition-colors">Prev</button>
+<button class="px-3 py-1 border border-border-subtle rounded bg-surface-card hover:bg-surface-container-high transition-colors">Next</button>
+</div>
+</div>
+</div>
+<!-- Right Column: Calendar & Channel Insight -->
+<div class="xl:col-span-4 space-y-gutter">
+<!-- Minified Calendar Component -->
+<div class="bg-surface-card border border-border-subtle rounded-lg p-6 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-title-sm text-title-sm">Quick Calendar</h3>
+<div class="flex gap-2">
+<button class="material-symbols-outlined text-secondary hover:text-on-surface">chevron_left</button>
+<button class="material-symbols-outlined text-secondary hover:text-on-surface">chevron_right</button>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-2 text-center text-body-sm mb-2">
+<span class="font-bold text-secondary">S</span>
+<span class="font-bold text-secondary">M</span>
+<span class="font-bold text-secondary">T</span>
+<span class="font-bold text-secondary">W</span>
+<span class="font-bold text-secondary">T</span>
+<span class="font-bold text-secondary">F</span>
+<span class="font-bold text-secondary">S</span>
+</div>
+<div class="grid grid-cols-7 gap-2 text-center">
+<!-- Simple Mock Days -->
+<div class="p-2 text-secondary/30">28</div>
+<div class="p-2 text-secondary/30">29</div>
+<div class="p-2 text-secondary/30">30</div>
+<div class="p-2 font-bold bg-primary-container/10 text-primary rounded-lg border border-primary/20">1</div>
+<div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">2<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span></div>
+<div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer">3</div>
+<div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">4<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-broadcast-blue rounded-full"></span></div>
+<!-- ... more days ... -->
+<script>
+                                // Loop to fill some extra days simply
+                                for(let i=5; i<=14; i++){
+                                    document.write(`<div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">${i}${i%3==0?'<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span>':''}</div>`);
+                                }
+                            </script><div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">5</div><div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">6<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span></div><div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">7</div><div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">8</div><div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">9<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span></div><div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">10</div><div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">11</div><div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">12<span class="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span></div><div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">13</div><div class="p-2 hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer relative">14</div>
+</div>
+</div>
+<!-- Sync Health Card -->
+<div class="bg-surface-card border border-border-subtle rounded-lg p-6 relative overflow-hidden group">
+<div class="flex items-start justify-between mb-6">
+<div>
+<h3 class="font-title-sm text-title-sm">Sync Health</h3>
+<p class="text-body-sm text-secondary mt-1">Google Sheets API Integration</p>
+</div>
+<div class="bg-tertiary-fixed/20 p-2 rounded-xl text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">check_circle</span>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-body-sm">Connection Uptime</span>
+<span class="font-data-tabular font-bold text-tertiary">99.98%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full">
+<div class="bg-tertiary w-[99.98%] h-full rounded-full"></div>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-sm">Last Master Update</span>
+<span class="font-data-tabular text-secondary text-body-sm">Today, 14:02 PM</span>
+</div>
+</div>
+<button class="w-full mt-6 py-2 px-4 border border-broadcast-blue text-broadcast-blue font-bold rounded-lg hover:bg-broadcast-blue/5 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">cached</span>
+                            Force Re-sync
+                        </button>
+</div>
+<!-- Active Partners -->
+<div class="bg-surface-card border border-border-subtle rounded-lg p-6">
+<h3 class="font-title-sm text-title-sm mb-4">Top Channels</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center font-bold text-primary">G1</div>
+<div class="flex-1">
+<div class="text-body-sm font-bold">Global One HD</div>
+<div class="text-body-sm text-secondary">24 Broadcasts/Week</div>
+</div>
+<span class="material-symbols-outlined text-secondary">arrow_forward</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-surface-container-high rounded-lg flex items-center justify-center font-bold text-broadcast-blue">BN</div>
+<div class="flex-1">
+<div class="text-body-sm font-bold">BizNet Finance</div>
+<div class="text-body-sm text-secondary">18 Broadcasts/Week</div>
+</div>
+<span class="material-symbols-outlined text-secondary">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Micro-interactions Script -->
+<script>
+        // Simple animation for the 'Live' indicator
+        const liveIndicator = document.querySelector('.animate-pulse');
+        if (liveIndicator) {
+            setInterval(() => {
+                liveIndicator.classList.toggle('opacity-50');
+            }, 800);
+        }
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('border-primary/30');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('border-primary/30');
+        });
+    </script>
+
+
+</body></html>

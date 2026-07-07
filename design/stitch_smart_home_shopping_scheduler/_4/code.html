@@ -1,0 +1,432 @@
+<!DOCTYPE html><html class="light" lang="ko" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Luminous Broadcast - 검색 결과</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#dbdad9",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "surface-container-lowest": "#ffffff",
+                    "on-surface": "#1b1c1b",
+                    "tertiary-fixed-dim": "#58dea3",
+                    "primary-container": "#f06a6a",
+                    "surface-variant": "#e4e2e1",
+                    "error-container": "#ffdad6",
+                    "surface-card": "#FFFFFF",
+                    "on-secondary-container": "#5f6368",
+                    "error": "#ba1a1a",
+                    "on-secondary-fixed": "#181c20",
+                    "broadcast-blue": "#1A73E8",
+                    "on-primary-container": "#62000e",
+                    "surface-container-low": "#f5f3f2",
+                    "inverse-primary": "#ffb3b0",
+                    "on-surface-variant": "#574140",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#c3c7cc",
+                    "outline": "#8b7170",
+                    "on-tertiary-container": "#003522",
+                    "text-body": "#5F6368",
+                    "inverse-surface": "#303030",
+                    "tertiary": "#006c48",
+                    "surface-main": "#FBF9F8",
+                    "outline-variant": "#debfbe",
+                    "surface-tint": "#a93539",
+                    "on-tertiary-fixed": "#002113",
+                    "secondary-container": "#dde0e6",
+                    "on-secondary-fixed-variant": "#43474c",
+                    "border-subtle": "#E5E1E0",
+                    "background": "#fbf9f8",
+                    "on-background": "#1b1c1b",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#410006",
+                    "secondary-fixed": "#dfe3e8",
+                    "tertiary-container": "#00aa74",
+                    "primary-fixed": "#ffdad8",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#e9e8e7",
+                    "on-primary-fixed-variant": "#881d24",
+                    "tertiary-fixed": "#77fbbd",
+                    "text-heading": "#202124",
+                    "surface": "#fbf9f8",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#ffb3b0",
+                    "surface-bright": "#fbf9f8",
+                    "primary": "#a93539",
+                    "secondary": "#5b5f64",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f2f0ef",
+                    "surface-container-highest": "#e4e2e1",
+                    "surface-container": "#efedec"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "1.5rem",
+                    "row-height-standard": "56px",
+                    "row-height-dense": "40px",
+                    "margin-page": "2rem",
+                    "sidebar-width": "260px",
+                    "container-max-width": "1600px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-sm": ["Hanken Grotesk"],
+                    "data-tabular": ["Inter"],
+                    "title-sm": ["Hanken Grotesk"],
+                    "label-caps": ["Inter"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-md": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "title-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Hanken Grotesk', sans-serif; background-color: #FBF9F8; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #dbdad9; border-radius: 10px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+    </style>
+</head>
+<body class="bg-surface-main text-on-surface">
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-full w-sidebar-width bg-surface-main border-r border-border-subtle flex flex-col py-margin-page z-50 min-h-screen">
+<div class="px-6 mb-10">
+<h1 class="font-headline-md text-headline-md text-on-surface">Broadcast Ops</h1>
+<p class="text-secondary text-sm">Enterprise Management</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center px-6 py-3 text-secondary hover:bg-surface-container-low transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span>
+<span class="font-title-sm text-title-sm">대시보드</span>
+</a>
+<a class="flex items-center px-6 py-3 text-secondary hover:bg-surface-container-low transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">calendar_today</span>
+<span class="font-title-sm text-title-sm">일정 등록</span>
+</a>
+<a class="flex items-center px-6 py-3 border-l-4 border-primary bg-primary/5 text-primary font-bold transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">search</span>
+<span class="font-title-sm text-title-sm">검색 목록</span>
+</a>
+<a class="flex items-center px-6 py-3 text-secondary hover:bg-surface-container-low transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">handshake</span>
+<span class="font-title-sm text-title-sm">홈쇼핑 업체 관리</span>
+</a>
+<a class="flex items-center px-6 py-3 text-secondary hover:bg-surface-container-low transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">account_circle</span>
+<span class="font-title-sm text-title-sm">계정 상태</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-border-subtle pt-4 space-y-1">
+<a class="flex items-center px-6 py-3 text-secondary hover:bg-surface-container-low transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">contact_support</span>
+<span class="font-title-sm text-title-sm">Support</span>
+</a>
+<a class="flex items-center px-6 py-3 text-secondary hover:bg-surface-container-low transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3">settings</span>
+<span class="font-title-sm text-title-sm">Settings</span>
+</a>
+</div>
+</aside>
+<main class="ml-sidebar-width min-h-screen flex flex-col h-screen">
+<!-- TopNavBar (Shared Component) -->
+<header class="sticky top-0 z-40 bg-surface border-b border-border-subtle flex justify-between items-center w-full px-gutter h-row-height-standard shrink-0">
+<div class="flex items-center gap-6 flex-1">
+<span class="font-display-lg text-display-lg text-primary">Luminous Broadcast</span>
+<div class="relative w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-lg">search</span>
+<input class="w-full bg-surface-container-lowest border border-border-subtle rounded-lg py-2 pl-10 pr-4 font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all" type="text" value="다이슨">
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-surface-container-high overflow-hidden ml-2 border border-border-subtle">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a broadcast engineer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFseZc2XQ0JwT4_KeI_XR6Ebz6x16euoV-80TzGWHellYLYeg5P8nc6Qqz3vPWYf-Oc5jjgAuY7_zrpd3wuJBM5nRd3NNbqiGFjzZDa7sHVT9txnxTk6V6z30yB5ZKGg94JDpAOkz4JsJzGVORQFay2mwvnbeJzFN-KNj_cStB8UkbO8qIkOp8EhbFSCJU6Ir50CRgoK1RxP6-A3UnQMP9Bw2agm35_NDfJo1_8-vsscukrlpxYEQFcQ">
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="p-margin-page flex-grow overflow-y-auto">
+<div class="max-w-[1600px] mx-auto space-y-8">
+<!-- Search Header & Filters -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-surface mb-2">
+                            '다이슨' <span class="text-secondary font-normal">검색 결과 (총 12건)</span>
+</h2>
+<div class="flex gap-2">
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold">전체 채널</span>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-xs font-semibold">최근 3개월</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-secondary">기간 설정</label>
+<button class="flex items-center gap-2 bg-surface-container-lowest border border-border-subtle px-4 py-2 rounded-lg font-body-md text-on-surface hover:border-outline transition-colors">
+<span class="material-symbols-outlined text-lg">calendar_month</span>
+                                2023.10.01 - 2023.12.31
+                            </button>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-secondary">채널 선택</label>
+<select class="bg-surface-container-lowest border border-border-subtle px-4 py-2 rounded-lg font-body-md text-on-surface focus:border-primary outline-none min-w-[140px] appearance-none">
+<option>전체 채널</option>
+<option>Live TV 01</option>
+<option>Global 24</option>
+<option>Home Shopping+</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-secondary">상태 필터</label>
+<select class="bg-surface-container-lowest border border-border-subtle px-4 py-2 rounded-lg font-body-md text-on-surface focus:border-primary outline-none min-w-[140px] appearance-none">
+<option>전체 상태</option>
+<option>Live</option>
+<option>Scheduled</option>
+<option>Completed</option>
+</select>
+</div>
+<button class="self-end bg-primary text-on-primary px-6 py-2 rounded-lg font-title-sm hover:brightness-110 transition-all h-[42px] flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">tune</span>
+                            필터 적용
+                        </button>
+</div>
+</div>
+<!-- Bento Style Quick Insights -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-surface-card border border-border-subtle p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<p class="font-label-caps text-label-caps text-secondary uppercase mb-1">총 방송 시간</p>
+<p class="font-display-lg text-display-lg text-primary">48h 20m</p>
+<p class="text-xs text-secondary mt-2 flex items-center">
+<span class="material-symbols-outlined text-sm text-broadcast-blue mr-1">trending_up</span>
+                            지난달 대비 12% 증가
+                        </p>
+</div>
+<div class="bg-surface-card border border-border-subtle p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<p class="font-label-caps text-label-caps text-secondary uppercase mb-1">최대 시청자수</p>
+<p class="font-display-lg text-display-lg text-primary">12.4k</p>
+<p class="text-xs text-secondary mt-2 flex items-center">
+<span class="material-symbols-outlined text-sm text-primary mr-1">trending_down</span>
+                            목표 대비 5% 미달
+                        </p>
+</div>
+<div class="bg-surface-card border border-border-subtle p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<p class="font-label-caps text-label-caps text-secondary uppercase mb-1">평균 비트레이트</p>
+<p class="font-display-lg text-display-lg text-primary">8.2 Mbps</p>
+<p class="text-xs text-secondary mt-2 flex items-center">
+<span class="material-symbols-outlined text-sm text-tertiary-container mr-1">check_circle</span>
+                            안정적인 상태
+                        </p>
+</div>
+<div class="bg-surface-card border border-border-subtle p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="relative z-10">
+<p class="font-label-caps text-label-caps text-secondary uppercase mb-1">현재 상태</p>
+<p class="font-display-lg text-display-lg text-primary">LIVE</p>
+<p class="text-xs text-secondary mt-2">Dyson V15 Detect 방송 중</p>
+</div>
+<div class="absolute right-[-20px] bottom-[-20px] opacity-10">
+<span class="material-symbols-outlined text-8xl">sensors</span>
+</div>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-surface-card border border-border-subtle rounded-xl overflow-hidden shadow-sm">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#F1EEEB] border-b border-border-subtle">
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">방송 일자</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">시간</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">채널</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">상품명</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">브랜드 / 파트너</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">상태</th>
+<th class="px-6 py-4 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider text-center">액션</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle font-data-tabular text-data-tabular">
+<!-- Row 1 (LIVE) -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-row-height-dense">2023.12.28</td>
+<td class="px-6 py-row-height-dense">20:00 - 21:00</td>
+<td class="px-6 py-row-height-dense text-secondary font-medium">Home Shopping+</td>
+<td class="px-6 py-row-height-dense font-semibold text-on-surface">
+<span class="text-primary">다이슨</span> V15 디텍트 앱솔루트 엑스트라
+                                    </td>
+<td class="px-6 py-row-height-dense">Dyson Korea</td>
+<td class="px-6 py-row-height-dense">
+<div class="flex items-center text-primary font-bold">
+<span class="status-dot bg-primary animate-pulse"></span>
+                                            Live
+                                        </div>
+</td>
+<td class="px-6 py-row-height-dense text-center">
+<button class="p-2 hover:bg-primary-container/20 rounded-lg text-primary transition-colors">
+<span class="material-symbols-outlined">monitoring</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 (Scheduled) -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-row-height-dense">2023.12.30</td>
+<td class="px-6 py-row-height-dense">14:00 - 15:00</td>
+<td class="px-6 py-row-height-dense text-secondary font-medium">Live TV 01</td>
+<td class="px-6 py-row-height-dense font-semibold text-on-surface">
+<span class="text-primary">다이슨</span> 에어랩 멀티 스타일러 롱
+                                    </td>
+<td class="px-6 py-row-height-dense">Dyson Korea</td>
+<td class="px-6 py-row-height-dense">
+<div class="flex items-center text-broadcast-blue">
+<span class="status-dot bg-broadcast-blue"></span>
+                                            Scheduled
+                                        </div>
+</td>
+<td class="px-6 py-row-height-dense text-center">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-colors">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 (Completed) -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-row-height-dense">2023.12.27</td>
+<td class="px-6 py-row-height-dense">10:30 - 11:30</td>
+<td class="px-6 py-row-height-dense text-secondary font-medium">Global 24</td>
+<td class="px-6 py-row-height-dense font-semibold text-on-surface">
+<span class="text-primary">다이슨</span> 슈퍼소닉 헤어드라이어 프로
+                                    </td>
+<td class="px-6 py-row-height-dense">Dyson Global</td>
+<td class="px-6 py-row-height-dense">
+<div class="flex items-center text-secondary">
+<span class="status-dot bg-secondary-fixed-dim"></span>
+                                            Completed
+                                        </div>
+</td>
+<td class="px-6 py-row-height-dense text-center">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-colors">
+<span class="material-symbols-outlined">analytics</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 (Completed) -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-row-height-dense">2023.12.26</td>
+<td class="px-6 py-row-height-dense">18:00 - 19:00</td>
+<td class="px-6 py-row-height-dense text-secondary font-medium">Home Shopping+</td>
+<td class="px-6 py-row-height-dense font-semibold text-on-surface">
+<span class="text-primary">다이슨</span> 퓨어 쿨 공기청정기 TP04
+                                    </td>
+<td class="px-6 py-row-height-dense">Dyson Korea</td>
+<td class="px-6 py-row-height-dense">
+<div class="flex items-center text-secondary">
+<span class="status-dot bg-secondary-fixed-dim"></span>
+                                            Completed
+                                        </div>
+</td>
+<td class="px-6 py-row-height-dense text-center">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-colors">
+<span class="material-symbols-outlined">analytics</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 (Scheduled) -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-6 py-row-height-dense">2024.01.05</td>
+<td class="px-6 py-row-height-dense">11:00 - 12:00</td>
+<td class="px-6 py-row-height-dense text-secondary font-medium">Live TV 02</td>
+<td class="px-6 py-row-height-dense font-semibold text-on-surface">
+<span class="text-primary">다이슨</span> 옴니-글라이드 플러스
+                                    </td>
+<td class="px-6 py-row-height-dense">Dyson Korea</td>
+<td class="px-6 py-row-height-dense">
+<div class="flex items-center text-broadcast-blue">
+<span class="status-dot bg-broadcast-blue"></span>
+                                            Scheduled
+                                        </div>
+</td>
+<td class="px-6 py-row-height-dense text-center">
+<button class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-colors">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-surface-container-low border-t border-border-subtle flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-secondary">
+                            Showing 1-5 of 12 results
+                        </span>
+<div class="flex items-center gap-1">
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-on-primary font-bold text-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-high text-secondary font-bold text-sm">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-container-high text-secondary font-bold text-sm">3</button>
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Context / Tips -->
+
+</div>
+</div>
+<footer class="mt-auto py-6 px-gutter border-t border-border-subtle flex justify-between items-center bg-surface-main">
+<span class="text-xs text-secondary">© 2024 Luminous Broadcast System. All rights reserved.</span>
+<div class="flex gap-4">
+<a class="text-xs text-secondary hover:text-primary underline" href="#">Privacy Policy</a>
+<a class="text-xs text-secondary hover:text-primary underline" href="#">Terms of Service</a>
+</div>
+</footer>
+</main>
+<!-- FAB for Quick Actions -->
+<button class="fixed right-8 bottom-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-[60]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+<script>
+        // Micro-interaction for hover effects on table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.classList.add('shadow-inner');
+            });
+            row.addEventListener('mouseleave', () => {
+                row.classList.remove('shadow-inner');
+            });
+        });
+    </script>
+
+
+</body></html>

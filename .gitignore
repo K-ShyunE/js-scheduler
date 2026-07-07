@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.wrangler/
+.wrangler-dev.*.log
+.dev-cookie.txt
+.dev.vars
+.env
+.env.*
+!.env.example
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.local

@@ -1,0 +1,11 @@
+name = "js-scheduler"
+compatibility_date = "2026-07-07"
+pages_build_output_dir = "dist"
+
+# 로컬 D1 개발을 위해 필요한 설정입니다.
+# Cloudflare 원격 D1을 만든 뒤에는 database_id를 실제 값으로 교체합니다.
+[[d1_databases]]
+binding = "DB"
+database_name = "js_scheduler"
+database_id = "00000000-0000-0000-0000-000000000000"
+preview_database_id = "DB"
