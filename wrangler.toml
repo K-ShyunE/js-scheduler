@@ -7,5 +7,5 @@ pages_build_output_dir = "dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "js_scheduler"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "c84e8c8d-33a4-4790-b41d-82ae7257dd78"
 preview_database_id = "DB"
