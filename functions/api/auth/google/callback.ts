@@ -32,7 +32,8 @@ export const onRequestGet: AppPagesFunction = async ({ env, request }) => {
   }
 
   try {
-    const token = await exchangeGoogleCode(env, code);
+    const redirectUri = `${new URL(request.url).origin}/api/auth/google/callback`;
+    const token = await exchangeGoogleCode(env, code, redirectUri);
     const googleUser = await fetchGoogleUserInfo(token.access_token!);
 
     if (!googleUser.email_verified || !isAllowedEmail(env, googleUser.email)) {

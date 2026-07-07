@@ -5,8 +5,12 @@ import type { AppPagesFunction } from "../../../_shared/types";
 export const onRequestGet: AppPagesFunction = async ({ env, request }) => {
   const state = crypto.randomUUID();
   const cookie = await createOAuthStateCookie(state, env, request);
+  
+  const requestUrl = new URL(request.url);
+  const redirectUri = `${requestUrl.origin}/api/auth/google/callback`;
+
   const headers = new Headers({
-    location: getGoogleAuthUrl(env, state),
+    location: getGoogleAuthUrl(env, state, redirectUri),
   });
   headers.append("set-cookie", cookie);
 

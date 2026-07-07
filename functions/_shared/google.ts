@@ -27,12 +27,12 @@ export interface GoogleUserInfo {
   picture?: string;
 }
 
-export function getGoogleAuthUrl(env: Env, state: string) {
+export function getGoogleAuthUrl(env: Env, state: string, redirectUri: string) {
   assertGoogleEnv(env);
 
   const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
   url.searchParams.set("client_id", env.GOOGLE_CLIENT_ID!);
-  url.searchParams.set("redirect_uri", env.GOOGLE_REDIRECT_URI!);
+  url.searchParams.set("redirect_uri", redirectUri);
   url.searchParams.set("response_type", "code");
   url.searchParams.set("scope", oauthScopes.join(" "));
   url.searchParams.set("state", state);
@@ -43,14 +43,14 @@ export function getGoogleAuthUrl(env: Env, state: string) {
   return url.toString();
 }
 
-export async function exchangeGoogleCode(env: Env, code: string) {
+export async function exchangeGoogleCode(env: Env, code: string, redirectUri: string) {
   assertGoogleEnv(env);
 
   const body = new URLSearchParams({
     code,
     client_id: env.GOOGLE_CLIENT_ID!,
     client_secret: env.GOOGLE_CLIENT_SECRET!,
-    redirect_uri: env.GOOGLE_REDIRECT_URI!,
+    redirect_uri: redirectUri,
     grant_type: "authorization_code",
   });
 
@@ -91,14 +91,14 @@ export function isAllowedEmail(env: Env, email: string) {
     .filter(Boolean);
 
   if (allowedEmails.length === 0) {
-    return env.CF_PAGES_BRANCH === "local";
+    return true; // 허용 이메일 설정이 없으면 모두 가입/로그인 허용
   }
 
   return allowedEmails.includes(email.toLowerCase());
 }
 
 function assertGoogleEnv(env: Env) {
-  if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !env.GOOGLE_REDIRECT_URI) {
+  if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET) {
     throw new Error("Google OAuth 환경 변수가 설정되지 않았습니다.");
   }
 }
