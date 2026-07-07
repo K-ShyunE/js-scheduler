@@ -42,7 +42,7 @@ const navItems: NavItem<AppPage>[] = [
 export function App() {
   const getInitialPage = (): AppPage => {
     const hash = window.location.hash.replace("#/", "").replace("#", "");
-    if (!hash) return "create";
+    if (!hash || hash === "login") return "create";
     const validPages: AppPage[] = ["dashboard", "create", "search", "partners", "account"];
     return validPages.includes(hash as AppPage) ? (hash as AppPage) : "create";
   };
@@ -109,8 +109,12 @@ export function App() {
 
   // URL hash 와 activePage 동기화
   useEffect(() => {
-    window.location.hash = `#/${activePage}`;
-  }, [activePage]);
+    if (authStatus === "authenticated") {
+      window.location.hash = `#/${activePage}`;
+    } else if (authStatus === "unauthenticated") {
+      window.location.hash = `#/login`;
+    }
+  }, [activePage, authStatus]);
 
   // 브라우저 뒤로가기/앞으로가기 등으로 해시 바뀔 때 상태 반영
   useEffect(() => {

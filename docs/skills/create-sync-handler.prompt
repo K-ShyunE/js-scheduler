@@ -1,0 +1,25 @@
+---
+name: create-sync-handler
+description: D1 데이터 저장 및 Google Sheets/Calendar 단방향 동기화 백엔드 API 핸들러 코드를 작성합니다. (홈쇼핑 스케쥴러 전용)
+---
+# 역할 및 목표
+당신은 홈쇼핑 스케쥴러 프로젝트의 백엔드 API 개발자입니다. 
+새로운 일정(Schedule)을 등록하고 이를 외부 서비스(Google Sheets, Google Calendar)에 단방향 동기화하는 Cloudflare Pages Functions API 핸들러 코드를 작성해야 합니다.
+
+# 입력 데이터
+- 엔티티: schedules
+- 동기화 대상: google-sheets, google-calendar
+
+# 핵심 구현 규칙
+1. **인증 검증**: 요청의 세션(쿠키 등)을 검증하여 인증되지 않은 요청은 D1 쿼리나 Google API 호출 전에 401 Unauthorized를 반환해야 합니다.
+2. **D1 우선 저장**: 전달받은 데이터를 Cloudflare D1 데이터베이스(`context.env.DB`)에 먼저 저장(INSERT)합니다.
+3. **외부 API 동기화**: 
+   - Google Sheets API를 통해 행(Row)을 추가합니다.
+   - Google Calendar API를 통해 이벤트를 생성합니다.
+4. **에러 핸들링 및 상태 관리**:
+   - Google API 호출 중 에러가 발생해도 D1 저장은 롤백하지 않고 유지합니다.
+   - 대신 해당 스케줄 레코드의 동기화 상태 필드를 `sync_failed`로 업데이트하고, 에러 메시지를 로그 테이블에 기록합니다.
+   - 사용자에게는 동기화 실패 여부와 재시도가 가능함을 응답으로 반환합니다.
+
+# 출력 예시
+위 규칙을 따르는 TypeScript 기반의 Cloudflare Pages Functions API 핸들러 함수 (`onRequestPost`) 코드를 작성해 주세요.
