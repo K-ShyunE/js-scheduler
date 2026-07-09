@@ -4,7 +4,7 @@ import * as realApi from "./realApi";
 // Vite 개발 서버만 띄운 상태에서는 Cloudflare Functions가 실행되지 않는다.
 // 그래서 npm run dev 중에만 mock 전환을 허용하고, 빌드된 Pages 환경에서는
 // .env 값과 무관하게 실제 /api/* Functions를 사용한다.
-const apiMode = import.meta.env.DEV ? (import.meta.env.VITE_API_MODE ?? "mock") : "real";
+const apiMode = "real";
 const api = apiMode === "real" ? realApi : mockApi;
 
 export const getSession = api.getSession;

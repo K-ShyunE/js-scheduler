@@ -10,8 +10,9 @@
   "scripts": {
     "dev": "vite",
     "dev:host": "vite --host 0.0.0.0",
+    "dev:api": "wrangler pages dev . --d1 DB --env-file .env --port 8787 --ip 0.0.0.0",
     "build": "tsc -b && vite build",
-    "cf:dev": "npm run build && wrangler pages dev dist --d1 DB --env-file .env --port 5173",
+    "cf:dev": "npm run build && wrangler pages dev dist --d1 DB --env-file .env --port 5173 --ip 0.0.0.0",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "db:seed:local": "wrangler d1 execute DB --local --file=seed/dev.sql",
     "preview": "vite preview",

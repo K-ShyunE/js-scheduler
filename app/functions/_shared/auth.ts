@@ -2,7 +2,7 @@ import type { Env, SessionUser } from "./types";
 
 const cookieName = "ls_session";
 const oauthStateCookieName = "ls_oauth_state";
-const sessionMaxAgeSeconds = 60 * 60 * 8;
+const sessionMaxAgeSeconds = 60 * 60 * 24 * 30;
 const oauthStateMaxAgeSeconds = 60 * 10;
 
 export async function createSessionCookie(user: Omit<SessionUser, "exp">, env: Env, request: Request) {

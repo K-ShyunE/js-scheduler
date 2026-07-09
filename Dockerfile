@@ -2,10 +2,10 @@ FROM node:24.18.0-bookworm-slim
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY app/package*.json ./
 RUN npm ci
 
-COPY . .
+COPY app/ ./
 
 EXPOSE 5173
 
