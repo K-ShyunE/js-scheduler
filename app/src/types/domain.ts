@@ -24,6 +24,8 @@ export interface User {
   googleEmail?: string | null;
   spreadsheetId?: string | null;
   calendarId?: string | null;
+  shipmentCalendarId?: string | null;
+  role?: "admin" | "user";
 }
 
 export interface Partner {
@@ -33,6 +35,8 @@ export interface Partner {
   contactName?: string;
   contactPhone?: string;
   memo?: string;
+  isActive: boolean;
+  displayOrder: number;
 }
 
 export interface Channel {
@@ -68,6 +72,7 @@ export interface Schedule {
   memo?: string;
   googleSheetRowId?: string;
   googleCalendarEventId?: string;
+  googleCalendarShipmentEventId?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -99,5 +104,6 @@ export interface ScheduleDraft {
   shipmentDate: string;
   quantity: number;
   memo?: string;
+  skipSync?: boolean;
 }
 

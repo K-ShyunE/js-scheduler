@@ -1,20 +1,34 @@
 import type { ScheduleStatus, SyncStatus } from "../types/domain";
 
 export function formatDate(value: string) {
-  return new Intl.DateTimeFormat("ko-KR", {
-    month: "2-digit",
-    day: "2-digit",
-    weekday: "short",
-  }).format(new Date(`${value}T00:00:00+09:00`));
+  if (!value) return "-";
+  try {
+    const d = new Date(`${value}T00:00:00+09:00`);
+    if (isNaN(d.getTime())) return "-";
+    return new Intl.DateTimeFormat("ko-KR", {
+      month: "2-digit",
+      day: "2-digit",
+      weekday: "short",
+    }).format(d);
+  } catch {
+    return "-";
+  }
 }
 
 export function formatDateLong(value: string) {
-  return new Intl.DateTimeFormat("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    weekday: "short",
-  }).format(new Date(`${value}T00:00:00+09:00`));
+  if (!value) return "-";
+  try {
+    const d = new Date(`${value}T00:00:00+09:00`);
+    if (isNaN(d.getTime())) return "-";
+    return new Intl.DateTimeFormat("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      weekday: "short",
+    }).format(d);
+  } catch {
+    return "-";
+  }
 }
 
 export function formatDateTime(value: string) {

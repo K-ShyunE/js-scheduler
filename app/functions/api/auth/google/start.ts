@@ -7,7 +7,7 @@ export const onRequestGet: AppPagesFunction = async ({ env, request }) => {
   const cookie = await createOAuthStateCookie(state, env, request);
   
   const requestUrl = new URL(request.url);
-  const redirectUri = `${requestUrl.origin}/api/auth/google/callback`;
+  const redirectUri = env.GOOGLE_REDIRECT_URI || `${requestUrl.origin}/api/auth/google/callback`;
 
   const headers = new Headers({
     location: getGoogleAuthUrl(env, state, redirectUri),

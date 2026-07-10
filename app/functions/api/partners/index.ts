@@ -2,6 +2,7 @@ import { badRequest, json, readJson, serverError } from "../../_shared/http";
 import { createId } from "../../_shared/ids";
 import { mapPartner } from "../../_shared/mappers";
 import type { AppPagesFunction, PartnerRow } from "../../_shared/types";
+import { getSessionUser } from "../../_shared/auth";
 
 interface PartnerCreateInput {
   name?: string;
@@ -11,11 +12,18 @@ interface PartnerCreateInput {
   memo?: string;
 }
 
-export const onRequestGet: AppPagesFunction = async ({ env }) => {
+export const onRequestGet: AppPagesFunction = async ({ env, request }) => {
+  const sessionUser = await getSessionUser(request, env);
+  if (!sessionUser) {
+    return json({ error: { message: "로그인이 필요합니다." } }, { status: 401 });
+  }
+
   try {
     const { results } = await env.DB.prepare(
-      `SELECT * FROM partners ORDER BY name ASC`,
-    ).all<PartnerRow>();
+      `SELECT * FROM partners WHERE user_id = ? ORDER BY display_order ASC, name ASC`,
+    )
+      .bind(sessionUser.id)
+      .all<PartnerRow>();
 
     return json({ data: results.map(mapPartner) });
   } catch (error) {
@@ -24,8 +32,12 @@ export const onRequestGet: AppPagesFunction = async ({ env }) => {
 };
 
 export const onRequestPost: AppPagesFunction = async ({ env, request }) => {
+  const sessionUser = await getSessionUser(request, env);
+  if (!sessionUser) {
+    return json({ error: { message: "로그인이 필요합니다." } }, { status: 401 });
+  }
+
   try {
-    // Phase 4에서 이 지점 앞에 세션 검사를 추가한다. 인증 실패 시 D1 접근 전 반환해야 한다.
     const input = await readJson<PartnerCreateInput>(request);
     const name = input.name?.trim();
     const type = input.type ?? "supplier";
@@ -34,15 +46,21 @@ export const onRequestPost: AppPagesFunction = async ({ env, request }) => {
       return badRequest("업체명을 입력해주세요.");
     }
 
+    const maxOrder = await env.DB.prepare(
+      `SELECT COALESCE(MAX(display_order), 0) AS value FROM partners WHERE user_id = ?`,
+    )
+      .bind(sessionUser.id)
+      .first<{ value: number }>();
+
     const now = new Date().toISOString();
     const id = createId("partner");
 
     await env.DB.prepare(
       `
         INSERT INTO partners (
-          id, name, type, contact_name, contact_phone, memo, created_at, updated_at
+          id, name, type, contact_name, contact_phone, memo, is_active, display_order, user_id, created_at, updated_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
     )
       .bind(
@@ -52,13 +70,16 @@ export const onRequestPost: AppPagesFunction = async ({ env, request }) => {
         input.contactName?.trim() || null,
         input.contactPhone?.trim() || null,
         input.memo?.trim() || null,
+        1,
+        (maxOrder?.value ?? 0) + 1,
+        sessionUser.id,
         now,
         now,
       )
       .run();
 
-    const row = await env.DB.prepare(`SELECT * FROM partners WHERE id = ?`)
-      .bind(id)
+    const row = await env.DB.prepare(`SELECT * FROM partners WHERE id = ? AND user_id = ?`)
+      .bind(id, sessionUser.id)
       .first<PartnerRow>();
 
     return json({ data: row ? mapPartner(row) : null }, { status: 201 });
@@ -67,3 +88,56 @@ export const onRequestPost: AppPagesFunction = async ({ env, request }) => {
   }
 };
 
+export const onRequestPut: AppPagesFunction = async ({ env, request }) => {
+  const sessionUser = await getSessionUser(request, env);
+  if (!sessionUser) {
+    return json({ error: { message: "로그인이 필요합니다." } }, { status: 401 });
+  }
+
+  try {
+    const input = await readJson<{
+      id: string;
+      name?: string;
+      contactName?: string;
+      isActive?: boolean;
+      displayOrder?: number;
+    }>(request);
+
+    if (!input.id) {
+      return badRequest("ID가 필요합니다.");
+    }
+
+    const now = new Date().toISOString();
+
+    const existing = await env.DB.prepare("SELECT * FROM partners WHERE id = ? AND user_id = ?")
+      .bind(input.id, sessionUser.id)
+      .first<PartnerRow>();
+
+    if (!existing) {
+      return badRequest("존재하지 않는 파트너입니다.");
+    }
+
+    const name = input.name !== undefined ? input.name.trim() : existing.name;
+    const contactName = input.contactName !== undefined ? (input.contactName.trim() || null) : existing.contact_name;
+    const isActive = input.isActive !== undefined ? (input.isActive ? 1 : 0) : existing.is_active;
+    const displayOrder = input.displayOrder !== undefined ? input.displayOrder : existing.display_order;
+
+    await env.DB.prepare(
+      `
+        UPDATE partners
+        SET name = ?, contact_name = ?, is_active = ?, display_order = ?, updated_at = ?
+        WHERE id = ? AND user_id = ?
+      `,
+    )
+      .bind(name, contactName, isActive, displayOrder, now, input.id, sessionUser.id)
+      .run();
+
+    const updated = await env.DB.prepare("SELECT * FROM partners WHERE id = ? AND user_id = ?")
+      .bind(input.id, sessionUser.id)
+      .first<PartnerRow>();
+
+    return json({ data: updated ? mapPartner(updated) : null });
+  } catch (error) {
+    return serverError(error);
+  }
+};

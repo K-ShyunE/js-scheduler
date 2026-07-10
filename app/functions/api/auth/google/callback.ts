@@ -32,11 +32,11 @@ export const onRequestGet: AppPagesFunction = async ({ env, request }) => {
   }
 
   try {
-    const redirectUri = `${new URL(request.url).origin}/api/auth/google/callback`;
+    const redirectUri = env.GOOGLE_REDIRECT_URI || `${new URL(request.url).origin}/api/auth/google/callback`;
     const token = await exchangeGoogleCode(env, code, redirectUri);
     const googleUser = await fetchGoogleUserInfo(token.access_token!);
 
-    if (!googleUser.email_verified || !isAllowedEmail(env, googleUser.email)) {
+    if (!googleUser.email_verified || !(await isAllowedEmail(env, googleUser.email))) {
       return redirectWithError(appBaseUrl, "허용되지 않은 Google 계정입니다.");
     }
 

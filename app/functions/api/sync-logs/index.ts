@@ -1,5 +1,6 @@
 import { json, serverError } from "../../_shared/http";
 import type { AppPagesFunction } from "../../_shared/types";
+import { getSessionUser } from "../../_shared/auth";
 
 interface SyncLogRow {
   id: string;
@@ -12,11 +13,25 @@ interface SyncLogRow {
   created_at: string;
 }
 
-export const onRequestGet: AppPagesFunction = async ({ env }) => {
+export const onRequestGet: AppPagesFunction = async ({ env, request }) => {
+  const sessionUser = await getSessionUser(request, env);
+  if (!sessionUser) {
+    return json({ error: { message: "로그인이 필요합니다." } }, { status: 401 });
+  }
+
   try {
     const { results } = await env.DB.prepare(
-      `SELECT * FROM sync_logs ORDER BY created_at DESC LIMIT 50`,
-    ).all<SyncLogRow>();
+      `
+        SELECT sync_logs.*
+        FROM sync_logs
+        JOIN schedules ON sync_logs.schedule_id = schedules.id
+        WHERE schedules.created_by = ?
+        ORDER BY sync_logs.created_at DESC
+        LIMIT 50
+      `,
+    )
+      .bind(sessionUser.id)
+      .all<SyncLogRow>();
 
     return json({
       data: results.map((row) => ({
@@ -34,4 +49,3 @@ export const onRequestGet: AppPagesFunction = async ({ env }) => {
     return serverError(error);
   }
 };
-

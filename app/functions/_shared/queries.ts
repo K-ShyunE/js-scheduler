@@ -13,6 +13,7 @@ export const scheduleViewSelect = `
     schedules.memo,
     schedules.google_sheet_row_id,
     schedules.google_calendar_event_id,
+    schedules.google_calendar_shipment_event_id,
     schedules.sync_status,
     schedules.created_at,
     schedules.updated_at,

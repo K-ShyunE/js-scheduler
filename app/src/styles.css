@@ -47,3 +47,15 @@ textarea {
 ::-webkit-scrollbar-thumb:hover {
   background: #c7c0bf;
 }
+
+/* Litepicker weekend styling (Sunday=Red, Saturday=Blue) */
+.litepicker .container__days .day-item:nth-child(7n+1):not(.is-empty) {
+  color: #ef4444 !important;
+}
+.litepicker .container__days .day-item:nth-child(7n):not(.is-empty) {
+  color: #3b82f6 !important;
+}
+.litepicker .container__days .day-item.is-selected {
+  color: #ffffff !important;
+}
+

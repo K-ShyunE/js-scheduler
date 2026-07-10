@@ -9,9 +9,10 @@ export const onRequestPost: AppPagesFunction = async ({ env, request }) => {
   }
 
   try {
-    const { spreadsheetId, calendarId } = (await request.json()) as {
+    const { spreadsheetId, calendarId, shipmentCalendarId } = (await request.json()) as {
       spreadsheetId?: string | null;
       calendarId?: string | null;
+      shipmentCalendarId?: string | null;
     };
 
     const connection = await env.DB.prepare(
@@ -31,6 +32,7 @@ export const onRequestPost: AppPagesFunction = async ({ env, request }) => {
         SET
           spreadsheet_id = ?,
           calendar_id = ?,
+          shipment_calendar_id = ?,
           updated_at = ?
         WHERE id = ?
       `
@@ -38,12 +40,13 @@ export const onRequestPost: AppPagesFunction = async ({ env, request }) => {
       .bind(
         spreadsheetId !== undefined ? spreadsheetId : null,
         calendarId !== undefined ? calendarId : null,
+        shipmentCalendarId !== undefined ? shipmentCalendarId : null,
         now,
         connection.id
       )
       .run();
 
-    return json({ success: true });
+    return json({ data: { success: true } });
   } catch (error) {
     const message = error instanceof Error ? error.message : "구글 연동 설정 저장 실패";
     return json({ error: { message } }, { status: 500 });

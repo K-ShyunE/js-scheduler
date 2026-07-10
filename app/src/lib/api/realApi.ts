@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "./http";
+import { apiGet, apiPost, apiPut } from "./http";
 import type {
   Channel,
   Partner,
@@ -46,6 +46,10 @@ export async function createSchedule(input: ScheduleDraft): Promise<ScheduleView
   return apiPost<ScheduleView>("/api/schedules", input);
 }
 
+export async function updateSchedule(input: ScheduleDraft & { id: string }): Promise<ScheduleView> {
+  return apiPut<ScheduleView>("/api/schedules", input);
+}
+
 export async function listSyncLogs(): Promise<SyncLog[]> {
   return apiGet<SyncLog[]>("/api/sync-logs");
 }
@@ -65,6 +69,7 @@ export async function getGoogleCalendars(): Promise<{ id: string; summary: strin
 export async function saveGoogleSettings(settings: {
   spreadsheetId: string | null;
   calendarId: string | null;
+  shipmentCalendarId: string | null;
 }): Promise<{ success: boolean }> {
   return apiPost<{ success: boolean }>("/api/google/settings", settings);
 }
@@ -75,4 +80,24 @@ export async function createGoogleSheet(title: string): Promise<{ spreadsheetId:
 
 export async function createGoogleCalendar(summary: string): Promise<{ calendarId: string }> {
   return apiPost<{ calendarId: string }>("/api/google/calendars/create", { summary });
+}
+
+export async function createChannel(name: string, alias?: string): Promise<Channel> {
+  return apiPost<Channel>("/api/channels", { name, alias });
+}
+
+export async function updateChannel(
+  id: string,
+  updates: { name?: string; alias?: string; isActive?: boolean; displayOrder?: number }
+): Promise<Channel> {
+  return apiPut<Channel>("/api/channels", { id, ...updates });
+}
+
+export async function createPartner(name: string, alias?: string): Promise<Partner> {
+  return apiPost<Partner>("/api/partners", { name, contactName: alias });
+}
+
+export async function updatePartner(id: string, updates: { name?: string; alias?: string }): Promise<Partner> {
+  const { alias, ...rest } = updates;
+  return apiPut<Partner>("/api/partners", { id, contactName: alias, ...rest });
 }

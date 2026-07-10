@@ -84,17 +84,26 @@ export async function fetchGoogleUserInfo(accessToken: string) {
   return response.json() as Promise<GoogleUserInfo>;
 }
 
-export function isAllowedEmail(env: Env, email: string) {
-  const allowedEmails = (env.ALLOWED_EMAILS || "")
-    .split(",")
-    .map((item) => item.trim().toLowerCase())
-    .filter(Boolean);
+import { SUPER_ADMIN_EMAILS } from "./config";
 
-  if (allowedEmails.length === 0) {
-    return true; // 허용 이메일 설정이 없으면 모두 가입/로그인 허용
+export async function isAllowedEmail(env: Env, email: string) {
+  const normalizedEmail = email.toLowerCase();
+  
+  if (SUPER_ADMIN_EMAILS.includes(normalizedEmail)) {
+    return true;
   }
 
-  return allowedEmails.includes(email.toLowerCase());
+  // Check DB for allowed users
+  try {
+    const row = await env.DB.prepare("SELECT email FROM allowed_users WHERE email = ?").bind(normalizedEmail).first();
+    if (row) {
+      return true;
+    }
+  } catch (e) {
+    console.error("Failed to check allowed_users table:", e);
+  }
+
+  return false;
 }
 
 function assertGoogleEnv(env: Env) {
@@ -203,37 +212,45 @@ export async function createGoogleCalendar(accessToken: string, summary: string)
   return payload.id;
 }
 
+export async function ensureGoogleSheetHeaders(
+  accessToken: string,
+  spreadsheetId: string,
+  headers: string[]
+) {
+  // Check if A1 has any value
+  const checkUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/A1:A1`;
+  const checkResponse = await fetch(checkUrl, {
+    headers: { authorization: `Bearer ${accessToken}` },
+  });
+  if (!checkResponse.ok) return;
+
+  const checkPayload = await checkResponse.json() as { values?: any[][] };
+  if (checkPayload.values && checkPayload.values.length > 0 && checkPayload.values[0].length > 0) {
+    // Already has data, headers likely exist
+    return;
+  }
+
+  // If empty, write headers to A1:..1
+  const endColumn = String.fromCharCode(64 + headers.length);
+  const range = `A1:${endColumn}1`;
+  const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?valueInputOption=USER_ENTERED`;
+  await fetch(updateUrl, {
+    method: "PUT",
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ values: [headers] }),
+  });
+}
+
 export async function writeGoogleSheetRow(
   accessToken: string,
   spreadsheetId: string,
-  data: {
-    id: string;
-    saleDate: string;
-    saleTime: string;
-    productName: string;
-    brandName: string;
-    channelName: string;
-    shipmentDate: string;
-    quantity: number;
-    memo: string;
-  }
+  rowValues: (string | number | null | undefined)[]
 ) {
-  const range = "A:I"; // 첫 번째 시트의 맨 아래에 이어 쓰기
+  const range = "A:H";
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?valueInputOption=USER_ENTERED`;
-
-  const values = [
-    [
-      data.id,
-      data.saleDate,
-      data.saleTime,
-      data.productName,
-      data.brandName,
-      data.channelName,
-      data.shipmentDate,
-      data.quantity,
-      data.memo,
-    ],
-  ];
 
   const response = await fetch(url, {
     method: "POST",
@@ -241,7 +258,7 @@ export async function writeGoogleSheetRow(
       authorization: `Bearer ${accessToken}`,
       "content-type": "application/json",
     },
-    body: JSON.stringify({ values }),
+    body: JSON.stringify({ values: [rowValues] }),
   });
 
   if (!response.ok) {
@@ -259,11 +276,32 @@ export async function createGoogleCalendarEvent(
   data: {
     title: string;
     description: string;
-    startDateTime: string;
-    endDateTime: string;
+    startDateTime?: string;
+    endDateTime?: string;
+    startDate?: string;
+    endDate?: string;
   }
 ) {
   const url = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`;
+
+  const body: any = {
+    summary: data.title,
+    description: data.description,
+  };
+
+  if (data.startDate && data.endDate) {
+    body.start = { date: data.startDate };
+    body.end = { date: data.endDate };
+  } else {
+    body.start = {
+      dateTime: data.startDateTime,
+      timeZone: "Asia/Seoul",
+    };
+    body.end = {
+      dateTime: data.endDateTime,
+      timeZone: "Asia/Seoul",
+    };
+  }
 
   const response = await fetch(url, {
     method: "POST",
@@ -271,18 +309,7 @@ export async function createGoogleCalendarEvent(
       authorization: `Bearer ${accessToken}`,
       "content-type": "application/json",
     },
-    body: JSON.stringify({
-      summary: data.title,
-      description: data.description,
-      start: {
-        dateTime: data.startDateTime,
-        timeZone: "Asia/Seoul",
-      },
-      end: {
-        dateTime: data.endDateTime,
-        timeZone: "Asia/Seoul",
-      },
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
@@ -292,6 +319,97 @@ export async function createGoogleCalendarEvent(
 
   const payload = (await response.json()) as { id: string };
   return payload.id;
+}
+
+export async function updateGoogleSheetRow(
+  accessToken: string,
+  spreadsheetId: string,
+  range: string,
+  rowValues: (string | number | null | undefined)[]
+) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?valueInputOption=USER_ENTERED`;
+
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ values: [rowValues] }),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`Google Sheets 수정 실패: ${response.statusText}. ${errText}`);
+  }
+}
+
+export async function updateGoogleCalendarEvent(
+  accessToken: string,
+  calendarId: string,
+  eventId: string,
+  data: {
+    title: string;
+    description: string;
+    startDateTime?: string;
+    endDateTime?: string;
+    startDate?: string;
+    endDate?: string;
+  }
+) {
+  const url = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`;
+
+  const body: any = {
+    summary: data.title,
+    description: data.description,
+  };
+
+  if (data.startDate && data.endDate) {
+    body.start = { date: data.startDate };
+    body.end = { date: data.endDate };
+  } else {
+    body.start = {
+      dateTime: data.startDateTime,
+      timeZone: "Asia/Seoul",
+    };
+    body.end = {
+      dateTime: data.endDateTime,
+      timeZone: "Asia/Seoul",
+    };
+  }
+
+  const response = await fetch(url, {
+    method: "PUT",
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`Google Calendar 이벤트 수정 실패: ${response.statusText}. ${errText}`);
+  }
+}
+
+export async function deleteGoogleCalendarEvent(
+  accessToken: string,
+  calendarId: string,
+  eventId: string
+) {
+  const url = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`;
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok && response.status !== 404) {
+    const errText = await response.text();
+    throw new Error(`Google Calendar 이벤트 삭제 실패: ${response.statusText}. ${errText}`);
+  }
 }
 
 

@@ -12,10 +12,6 @@ interface AppShellProps<T extends string> {
   setActivePage: (page: T) => void;
   setQuery: (query: string) => void;
   user: User | null;
-  utilityItems: Array<{
-    label: string;
-    icon: LucideIcon;
-  }>;
 }
 
 export function AppShell<T extends string>({
@@ -26,7 +22,6 @@ export function AppShell<T extends string>({
   setActivePage,
   setQuery,
   user,
-  utilityItems,
 }: AppShellProps<T>) {
   return (
     <div className="min-h-screen bg-surface-main text-text-heading">
@@ -34,7 +29,6 @@ export function AppShell<T extends string>({
         activePage={activePage}
         navItems={navItems}
         setActivePage={setActivePage}
-        utilityItems={utilityItems}
       />
       <div className="ml-[260px] min-h-screen">
         <TopBar query={query} setQuery={setQuery} user={user} />

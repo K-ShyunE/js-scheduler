@@ -9,9 +9,10 @@ interface ScheduleListPageProps {
   query: string;
   schedules: ScheduleView[];
   setQuery: (query: string) => void;
+  onEdit: (schedule: ScheduleView) => void;
 }
 
-export function ScheduleListPage({ query, schedules, setQuery }: ScheduleListPageProps) {
+export function ScheduleListPage({ query, schedules, setQuery, onEdit }: ScheduleListPageProps) {
   return (
     <>
       <PageHeader
@@ -83,6 +84,7 @@ export function ScheduleListPage({ query, schedules, setQuery }: ScheduleListPag
                     aria-label="일정 수정"
                     className="inline-grid h-9 w-9 place-items-center rounded text-secondary transition hover:bg-white hover:text-primary"
                     type="button"
+                    onClick={() => onEdit(schedule)}
                   >
                     <Edit3 size={18} />
                   </button>

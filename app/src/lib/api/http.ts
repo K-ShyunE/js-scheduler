@@ -25,6 +25,19 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   return readApiResponse<T>(response);
 }
 
+export async function apiPut<T>(path: string, body: unknown): Promise<T> {
+  const response = await fetch(path, {
+    method: "PUT",
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  return readApiResponse<T>(response);
+}
+
 async function readApiResponse<T>(response: Response): Promise<T> {
   const payload = (await response.json()) as ApiResponse<T> | { error?: { message?: string } };
 

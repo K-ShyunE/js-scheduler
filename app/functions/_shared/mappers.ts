@@ -12,6 +12,8 @@ export function mapPartner(row: PartnerRow) {
     contactName: row.contact_name ?? undefined,
     contactPhone: row.contact_phone ?? undefined,
     memo: row.memo ?? undefined,
+    isActive: row.is_active === 1,
+    displayOrder: row.display_order,
   };
 }
 
@@ -42,6 +44,7 @@ export function mapScheduleView(row: ScheduleViewRow) {
     memo: row.memo ?? undefined,
     googleSheetRowId: row.google_sheet_row_id ?? undefined,
     googleCalendarEventId: row.google_calendar_event_id ?? undefined,
+    googleCalendarShipmentEventId: row.google_calendar_shipment_event_id ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     product: {

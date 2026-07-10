@@ -44,6 +44,8 @@ export interface PartnerRow {
   contact_name: string | null;
   contact_phone: string | null;
   memo: string | null;
+  is_active: number;
+  display_order: number;
   created_at: string;
   updated_at: string;
 }
@@ -73,6 +75,7 @@ export interface ScheduleViewRow {
   memo: string | null;
   google_sheet_row_id: string | null;
   google_calendar_event_id: string | null;
+  google_calendar_shipment_event_id: string | null;
   sync_status: "not_synced" | "synced" | "sync_failed" | "sync_pending";
   created_at: string;
   updated_at: string;

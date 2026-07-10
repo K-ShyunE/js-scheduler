@@ -20,7 +20,9 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
+    "litepicker": "^2.0.12",
     "lucide-react": "^0.468.0",
+    "papaparse": "^5.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.53.2",
@@ -31,6 +33,7 @@
     "@cloudflare/workers-types": "^4.20260702.1",
     "@eslint/js": "^9.17.0",
     "@types/node": "^22.10.2",
+    "@types/papaparse": "^5.5.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.0",

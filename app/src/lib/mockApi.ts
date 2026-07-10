@@ -99,10 +99,12 @@ export async function createSchedule(input: ScheduleDraft): Promise<ScheduleView
   const parsed = scheduleDraftSchema.parse(input);
   const now = new Date().toISOString();
 
+  const resolvedBrandName = parsed.brandName || partners.find((item) => item.id === parsed.partnerId)?.name || "";
+
   const product: Product = {
     id: `product_${crypto.randomUUID()}`,
     name: parsed.productName,
-    brandName: parsed.brandName,
+    brandName: resolvedBrandName,
     partnerId: parsed.partnerId,
   };
 
@@ -113,11 +115,10 @@ export async function createSchedule(input: ScheduleDraft): Promise<ScheduleView
     channelId: parsed.channelId,
     saleDate: parsed.saleDate,
     saleStartTime: parsed.saleStartTime,
-    saleEndTime: parsed.saleEndTime,
-    shipmentDate: parsed.shipmentDate,
+    saleEndTime: parsed.saleEndTime || parsed.saleStartTime,
+    shipmentDate: parsed.shipmentDate || "",
     quantity: parsed.quantity,
     status: "scheduled",
-    // 실제 API에서는 D1 저장 이후 Google 작성 결과에 따라 상태를 갱신한다.
     syncStatus: "sync_pending",
     memo: parsed.memo,
     createdAt: now,
@@ -140,6 +141,46 @@ export async function createSchedule(input: ScheduleDraft): Promise<ScheduleView
   ];
 
   return hydrateSchedule(schedule);
+}
+
+export async function updateSchedule(input: ScheduleDraft & { id: string }): Promise<ScheduleView> {
+  await delay(180);
+  const parsed = scheduleDraftSchema.parse(input);
+  const now = new Date().toISOString();
+
+  const idx = mutableSchedules.findIndex((s) => s.id === input.id);
+  if (idx === -1) {
+    throw new Error("Schedules not found");
+  }
+
+  const existingSchedule = mutableSchedules[idx];
+  const prodIdx = mutableProducts.findIndex((p) => p.id === existingSchedule.productId);
+
+  const resolvedBrandName = parsed.brandName || partners.find((item) => item.id === parsed.partnerId)?.name || "";
+
+  if (prodIdx !== -1) {
+    mutableProducts[prodIdx] = {
+      ...mutableProducts[prodIdx],
+      name: parsed.productName,
+      brandName: resolvedBrandName,
+      partnerId: parsed.partnerId,
+    };
+  }
+
+  mutableSchedules[idx] = {
+    ...existingSchedule,
+    partnerId: parsed.partnerId,
+    channelId: parsed.channelId,
+    saleDate: parsed.saleDate,
+    saleStartTime: parsed.saleStartTime,
+    saleEndTime: parsed.saleEndTime || parsed.saleStartTime,
+    shipmentDate: parsed.shipmentDate || "",
+    quantity: parsed.quantity,
+    memo: parsed.memo,
+    updatedAt: now,
+  };
+
+  return hydrateSchedule(mutableSchedules[idx]);
 }
 
 export async function listSyncLogs(): Promise<SyncLog[]> {
@@ -181,10 +222,12 @@ export async function getGoogleCalendars(): Promise<{ id: string; summary: strin
 export async function saveGoogleSettings(settings: {
   spreadsheetId: string | null;
   calendarId: string | null;
+  shipmentCalendarId: string | null;
 }): Promise<{ success: boolean }> {
   await delay();
   currentUser.spreadsheetId = settings.spreadsheetId;
   currentUser.calendarId = settings.calendarId;
+  currentUser.shipmentCalendarId = settings.shipmentCalendarId;
   return { success: true };
 }
 
@@ -196,4 +239,63 @@ export async function createGoogleSheet(title: string): Promise<{ spreadsheetId:
 export async function createGoogleCalendar(summary: string): Promise<{ calendarId: string }> {
   await delay(200);
   return { calendarId: `mock_cal_${crypto.randomUUID()}` };
+}
+
+export async function createChannel(name: string, alias?: string): Promise<Channel> {
+  await delay();
+  const maxOrder = channels.reduce((max, item) => (item.displayOrder > max ? item.displayOrder : max), 0);
+  const newChannel: Channel = {
+    id: `channel_${crypto.randomUUID()}`,
+    name,
+    alias,
+    type: "home_shopping",
+    isActive: true,
+    displayOrder: maxOrder + 1,
+  };
+  channels.push(newChannel);
+  return newChannel;
+}
+
+export async function updateChannel(
+  id: string,
+  updates: { name?: string; alias?: string; isActive?: boolean; displayOrder?: number }
+): Promise<Channel> {
+  await delay();
+  const idx = channels.findIndex((c) => c.id === id);
+  if (idx === -1) throw new Error("Channel not found");
+  const updated = { ...channels[idx], ...updates };
+  channels[idx] = updated;
+  return updated;
+}
+
+export async function createPartner(name: string, alias?: string): Promise<Partner> {
+  await delay();
+  const maxOrder = partners.reduce((max, item) => (item.displayOrder > max ? item.displayOrder : max), 0);
+  const newPartner: Partner = {
+    id: `partner_${crypto.randomUUID()}`,
+    name,
+    contactName: alias,
+    type: "supplier",
+    isActive: true,
+    displayOrder: maxOrder + 1,
+  };
+  partners.push(newPartner);
+  return newPartner;
+}
+
+export async function updatePartner(
+  id: string,
+  updates: { name?: string; alias?: string; isActive?: boolean; displayOrder?: number }
+): Promise<Partner> {
+  await delay();
+  const idx = partners.findIndex((p) => p.id === id);
+  if (idx === -1) throw new Error("Partner not found");
+  const { alias, ...rest } = updates;
+  const updated = {
+    ...partners[idx],
+    ...rest,
+    ...(alias !== undefined ? { contactName: alias } : {}),
+  };
+  partners[idx] = updated;
+  return updated;
 }

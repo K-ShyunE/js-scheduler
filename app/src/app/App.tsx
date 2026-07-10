@@ -8,6 +8,7 @@ import {
   Settings,
   Store,
   UserCircle,
+  Users,
 } from "lucide-react";
 import { AppShell } from "../components/layout/AppShell";
 import type { NavItem } from "../components/layout/Sidebar";
@@ -15,8 +16,10 @@ import { AccountStatusPage } from "../pages/AccountStatusPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { LoginPage } from "../pages/LoginPage";
 import { PartnersPage } from "../pages/PartnersPage";
+import { UserManagementPage } from "../pages/UserManagementPage";
 import { ScheduleFormPage } from "../pages/ScheduleFormPage";
 import { ScheduleListPage } from "../pages/ScheduleListPage";
+import { ScheduleEditSlideOver } from "../pages/ScheduleEditSlideOver";
 import {
   devLogin,
   getSession,
@@ -26,12 +29,17 @@ import {
   listSyncLogs,
   logout,
   startGoogleLogin,
+  createChannel,
+  updateChannel,
+  createPartner,
+  updatePartner,
+  saveGoogleSettings,
 } from "../lib/api";
 import type { Channel, Partner, ScheduleView, SyncLog, User } from "../types/domain";
 
-export type AppPage = "dashboard" | "create" | "search" | "partners" | "account";
+export type AppPage = "dashboard" | "create" | "search" | "partners" | "account" | "users";
 
-const navItems: NavItem<AppPage>[] = [
+const baseNavItems: NavItem<AppPage>[] = [
   { id: "dashboard", label: "대시보드", icon: LayoutDashboard },
   { id: "create", label: "일정 등록", icon: CalendarPlus },
   { id: "search", label: "검색 목록", icon: Search },
@@ -43,13 +51,14 @@ export function App() {
   const getInitialPage = (): AppPage => {
     const hash = window.location.hash.replace("#/", "").replace("#", "");
     if (!hash || hash === "login") return "create";
-    const validPages: AppPage[] = ["dashboard", "create", "search", "partners", "account"];
+    const validPages: AppPage[] = ["dashboard", "create", "search", "partners", "account", "users"];
     return validPages.includes(hash as AppPage) ? (hash as AppPage) : "create";
   };
 
   const [activePage, setActivePage] = useState<AppPage>(getInitialPage);
   const [query, setQuery] = useState("");
   const [user, setUser] = useState<User | null>(null);
+  const [editingSchedule, setEditingSchedule] = useState<ScheduleView | null>(null);
   const [schedules, setSchedules] = useState<ScheduleView[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [channels, setChannels] = useState<Channel[]>([]);
@@ -120,7 +129,7 @@ export function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace("#/", "").replace("#", "");
-      const validPages: AppPage[] = ["dashboard", "create", "search", "partners", "account"];
+      const validPages: AppPage[] = ["dashboard", "create", "search", "partners", "account", "users"];
       if (hash && validPages.includes(hash as AppPage) && hash !== activePage) {
         setActivePage(hash as AppPage);
       }
@@ -163,6 +172,53 @@ export function App() {
     setAuthStatus("unauthenticated");
   }
 
+  async function handleCreateChannel(name: string, alias?: string) {
+    await createChannel(name, alias);
+    const nextChannels = await listChannels();
+    setChannels(nextChannels);
+  }
+
+  async function handleUpdateChannel(
+    id: string,
+    updates: { name?: string; alias?: string; isActive?: boolean; displayOrder?: number }
+  ) {
+    await updateChannel(id, updates);
+    const nextChannels = await listChannels();
+    setChannels(nextChannels);
+  }
+
+  async function handleCreatePartner(name: string, alias?: string) {
+    await createPartner(name, alias);
+    const nextPartners = await listPartners();
+    setPartners(nextPartners);
+  }
+
+  async function handleUpdatePartner(
+    id: string,
+    updates: { name?: string; alias?: string; isActive?: boolean; displayOrder?: number }
+  ) {
+    await updatePartner(id, updates);
+    const nextPartners = await listPartners();
+    setPartners(nextPartners);
+  }
+
+  async function handleSaveGoogleSettings(
+    spreadsheetId: string | null,
+    calendarId: string | null,
+    shipmentCalendarId: string | null
+  ) {
+    await saveGoogleSettings({ spreadsheetId, calendarId, shipmentCalendarId });
+    setUser((curr) => {
+      if (!curr) return null;
+      return {
+        ...curr,
+        spreadsheetId,
+        calendarId,
+        shipmentCalendarId,
+      };
+    });
+  }
+
   const stats = useMemo(() => {
     const scheduledCount = schedules.filter((item) => item.status === "scheduled").length;
     const readyCount = schedules.filter((item) => item.status === "shipping_ready").length;
@@ -178,6 +234,13 @@ export function App() {
     };
   }, [schedules]);
 
+  const navItems = useMemo(() => {
+    if (user?.role === "admin") {
+      return [...baseNavItems, { id: "users", label: "사용자 관리", icon: Users }];
+    }
+    return baseNavItems;
+  }, [user]);
+
   const page = (() => {
     if (activePage === "dashboard") {
       return (
@@ -187,6 +250,7 @@ export function App() {
           syncLogs={syncLogs}
           stats={stats}
           onCreate={() => setActivePage("create")}
+          onEdit={(schedule) => setEditingSchedule(schedule)}
         />
       );
     }
@@ -196,6 +260,8 @@ export function App() {
         <ScheduleFormPage
           channels={channels}
           partners={partners}
+          user={user}
+          editingSchedule={null}
           onCreated={async () => {
             await refreshData("");
             setQuery("");
@@ -206,19 +272,45 @@ export function App() {
     }
 
     if (activePage === "search") {
-      return <ScheduleListPage schedules={schedules} query={query} setQuery={setQuery} />;
+      return (
+        <ScheduleListPage
+          schedules={schedules}
+          query={query}
+          setQuery={setQuery}
+          onEdit={(schedule) => {
+            setEditingSchedule(schedule);
+          }}
+        />
+      );
     }
 
     if (activePage === "partners") {
-      return <PartnersPage channels={channels} partners={partners} />;
+      return (
+        <PartnersPage
+          channels={channels}
+          partners={partners}
+          onCreateChannel={handleCreateChannel}
+          onUpdateChannel={handleUpdateChannel}
+          onCreatePartner={handleCreatePartner}
+          onUpdatePartner={handleUpdatePartner}
+        />
+      );
+    }
+
+    if (activePage === "users" && user?.role === "admin") {
+      return <UserManagementPage onLogout={handleLogout} />;
     }
 
     return (
       <AccountStatusPage
         onGoogleLogin={startGoogleLogin}
         onLogout={handleLogout}
+        onSaveSettings={handleSaveGoogleSettings}
         user={user}
         syncLogs={syncLogs}
+        channels={channels}
+        partners={partners}
+        refreshData={loadInitialData}
       />
     );
   })();
@@ -242,13 +334,20 @@ export function App() {
       setActivePage={setActivePage}
       setQuery={setQuery}
       user={user}
-      utilityItems={[
-        { label: "Google 연동", icon: Link2 },
-        { label: "설정", icon: Settings },
-        { label: "데이터 점검", icon: PackageSearch },
-      ]}
     >
       {page}
+      <ScheduleEditSlideOver
+        isOpen={!!editingSchedule}
+        onClose={() => setEditingSchedule(null)}
+        channels={channels}
+        partners={partners}
+        user={user}
+        editingSchedule={editingSchedule}
+        onCreated={async () => {
+          setEditingSchedule(null);
+          await refreshData("");
+        }}
+      />
     </AppShell>
   );
 }

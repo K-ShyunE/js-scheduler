@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CalendarCheck, CloudOff, FileSpreadsheet, KeyRound, RefreshCw, CheckCircle2, AlertCircle, Plus, Folder, ChevronRight, ArrowLeft, Home, ChevronDown } from "lucide-react";
+import { CalendarCheck, CloudOff, FileSpreadsheet, KeyRound, RefreshCw, CheckCircle2, AlertCircle, Plus, Folder, ChevronRight, ArrowLeft, ChevronDown } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
@@ -8,23 +8,31 @@ import type { SyncLog, User } from "../types/domain";
 import {
   getGoogleSheets,
   getGoogleCalendars,
-  saveGoogleSettings,
   createGoogleSheet,
   createGoogleCalendar
 } from "../lib/api";
+import { MigrationModal } from "../components/migration/MigrationModal";
 
 interface AccountStatusPageProps {
   onGoogleLogin: () => void;
   onLogout: () => Promise<void>;
+  onSaveSettings: (spreadsheetId: string | null, calendarId: string | null, shipmentCalendarId: string | null) => Promise<void>;
   syncLogs: SyncLog[];
   user: User | null;
+  channels: any[];
+  partners: any[];
+  refreshData: () => void;
 }
 
 export function AccountStatusPage({
   onGoogleLogin,
   onLogout,
+  onSaveSettings,
   syncLogs,
   user,
+  channels,
+  partners,
+  refreshData,
 }: AccountStatusPageProps) {
   const isGoogleConnected = !!user?.googleEmail;
 
@@ -33,6 +41,7 @@ export function AccountStatusPage({
 
   const [selectedSheetId, setSelectedSheetId] = useState<string>("");
   const [selectedCalendarId, setSelectedCalendarId] = useState<string>("");
+  const [selectedShipmentCalendarId, setSelectedShipmentCalendarId] = useState<string>("");
 
   const [isCalendarsLoading, setIsCalendarsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -47,6 +56,7 @@ export function AccountStatusPage({
   const [tempSelectedSheet, setTempSelectedSheet] = useState<{ id: string; name: string } | null>(null);
 
   const [showCalendarDropdown, setShowCalendarDropdown] = useState(false);
+  const [showShipmentCalendarDropdown, setShowShipmentCalendarDropdown] = useState(false);
 
   const [showSheetModal, setShowSheetModal] = useState(false);
   const [showCalendarModal, setShowCalendarModal] = useState(false);
@@ -54,6 +64,8 @@ export function AccountStatusPage({
   const [newCalendarTitle, setNewCalendarTitle] = useState("");
   const [isCreatingSheet, setIsCreatingSheet] = useState(false);
   const [isCreatingCalendar, setIsCreatingCalendar] = useState(false);
+  const [creatingCalendarType, setCreatingCalendarType] = useState<"broadcast" | "shipment">("broadcast");
+  const [showMigrationModal, setShowMigrationModal] = useState(false);
 
   const currentFolder = driveHistory[driveHistory.length - 1];
 
@@ -67,6 +79,7 @@ export function AccountStatusPage({
     if (user) {
       setSelectedSheetId(user.spreadsheetId || "");
       setSelectedCalendarId(user.calendarId || "");
+      setSelectedShipmentCalendarId(user.shipmentCalendarId || "");
     }
   }, [user]);
 
@@ -136,15 +149,12 @@ export function AccountStatusPage({
     setIsSaving(true);
     setSaveStatus("idle");
     try {
-      await saveGoogleSettings({
-        spreadsheetId: selectedSheetId || null,
-        calendarId: selectedCalendarId || null,
-      });
+      await onSaveSettings(
+        selectedSheetId || null,
+        selectedCalendarId || null,
+        selectedShipmentCalendarId || null
+      );
       setSaveStatus("success");
-      if (user) {
-        user.spreadsheetId = selectedSheetId || null;
-        user.calendarId = selectedCalendarId || null;
-      }
       setTimeout(() => setSaveStatus("idle"), 3000);
     } catch (e) {
       console.error(e);
@@ -176,7 +186,11 @@ export function AccountStatusPage({
     try {
       const res = await createGoogleCalendar(newCalendarTitle.trim());
       setCalendars((prev) => [{ id: res.calendarId, summary: newCalendarTitle.trim(), backgroundColor: "#4285F4" }, ...prev]);
-      setSelectedCalendarId(res.calendarId);
+      if (creatingCalendarType === "broadcast") {
+        setSelectedCalendarId(res.calendarId);
+      } else {
+        setSelectedShipmentCalendarId(res.calendarId);
+      }
       setShowCalendarModal(false);
       setNewCalendarTitle("");
     } catch (e) {
@@ -294,12 +308,16 @@ export function AccountStatusPage({
                   </div>
                 </div>
 
+                {/* 1. 방송일정 캘린더 */}
                 <div>
                   <div className="flex items-center justify-between">
-                    <label className="block text-sm font-bold text-secondary">Google Calendar 대상 캘린더</label>
+                    <label className="block text-sm font-bold text-secondary">방송일정 캘린더 연동</label>
                     <button
                       className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
-                      onClick={() => setShowCalendarModal(true)}
+                      onClick={() => {
+                        setCreatingCalendarType("broadcast");
+                        setShowCalendarModal(true);
+                      }}
                     >
                       <Plus size={14} />
                       새로 만들기
@@ -310,7 +328,10 @@ export function AccountStatusPage({
                       <button
                         type="button"
                         disabled={isCalendarsLoading}
-                        onClick={() => setShowCalendarDropdown(!showCalendarDropdown)}
+                        onClick={() => {
+                          setShowCalendarDropdown(!showCalendarDropdown);
+                          setShowShipmentCalendarDropdown(false);
+                        }}
                         className="w-full flex items-center justify-between rounded border border-border px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 text-left disabled:bg-surface-container-low"
                       >
                         <div className="flex items-center gap-2 min-w-0">
@@ -377,6 +398,96 @@ export function AccountStatusPage({
                   </div>
                 </div>
 
+                {/* 2. 출고일정 캘린더 */}
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-bold text-secondary">출고일정 캘린더 연동</label>
+                    <button
+                      className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
+                      onClick={() => {
+                        setCreatingCalendarType("shipment");
+                        setShowCalendarModal(true);
+                      }}
+                    >
+                      <Plus size={14} />
+                      새로 만들기
+                    </button>
+                  </div>
+                  <div className="mt-2 flex gap-3">
+                    <div className="relative flex-1">
+                      <button
+                        type="button"
+                        disabled={isCalendarsLoading}
+                        onClick={() => {
+                          setShowShipmentCalendarDropdown(!showShipmentCalendarDropdown);
+                          setShowCalendarDropdown(false);
+                        }}
+                        className="w-full flex items-center justify-between rounded border border-border px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 text-left disabled:bg-surface-container-low"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          {selectedShipmentCalendarId ? (
+                            <span
+                              className="h-3.5 w-3.5 rounded-full shrink-0 border border-black/10"
+                              style={{ backgroundColor: calendars.find(c => c.id === selectedShipmentCalendarId)?.backgroundColor || "#4285F4" }}
+                            />
+                          ) : (
+                            <span className="h-3.5 w-3.5 rounded-full bg-slate-200 shrink-0 border border-black/10" />
+                          )}
+                          <span className="truncate font-semibold text-text-heading">
+                            {selectedShipmentCalendarId
+                              ? calendars.find(c => c.id === selectedShipmentCalendarId)?.summary || selectedShipmentCalendarId
+                              : "동기화하지 않음"}
+                          </span>
+                        </div>
+                        {isCalendarsLoading ? (
+                          <RefreshCw className="animate-spin text-secondary shrink-0 ml-2" size={16} />
+                        ) : (
+                          <ChevronDown className="text-secondary shrink-0 ml-2" size={16} />
+                        )}
+                      </button>
+
+                      {showShipmentCalendarDropdown && (
+                        <>
+                          <div className="fixed inset-0 z-30" onClick={() => setShowShipmentCalendarDropdown(false)} />
+                          <ul className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto rounded border border-border bg-white py-1 shadow-lg z-40 divide-y divide-border-subtle">
+                            <li
+                              onClick={() => {
+                                setSelectedShipmentCalendarId("");
+                                setShowShipmentCalendarDropdown(false);
+                              }}
+                              className="flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-surface-container-low cursor-pointer"
+                            >
+                              <span className="h-3.5 w-3.5 rounded-full bg-slate-200 shrink-0 border border-black/10" />
+                              <span className="text-secondary font-semibold">동기화하지 않음</span>
+                            </li>
+                            {calendars.map((cal) => (
+                              <li
+                                key={cal.id}
+                                onClick={() => {
+                                  setSelectedShipmentCalendarId(cal.id);
+                                  setShowShipmentCalendarDropdown(false);
+                                }}
+                                className={`flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-surface-container-low cursor-pointer ${
+                                  selectedShipmentCalendarId === cal.id ? "bg-primary-soft/50 font-bold" : ""
+                                }`}
+                              >
+                                <span
+                                  className="h-3.5 w-3.5 rounded-full shrink-0 border border-black/10"
+                                  style={{ backgroundColor: cal.backgroundColor || "#4285F4" }}
+                                />
+                                <span className="truncate text-text-heading font-semibold">{cal.summary}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
+                    </div>
+                    <Button onClick={loadInitialData} variant="secondary">
+                      <RefreshCw size={16} />
+                    </Button>
+                  </div>
+                </div>
+
                 <div className="border-t border-border-subtle pt-6 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {saveStatus === "success" && (
@@ -408,20 +519,38 @@ export function AccountStatusPage({
               <h3 className="text-lg font-bold">동기화 이력</h3>
             </div>
             <div className="divide-y divide-border-subtle">
-              {syncLogs.map((log) => (
-                <div className="grid grid-cols-[150px_1fr_120px] gap-4 px-6 py-4" key={log.id}>
-                  <span className="text-sm font-bold text-secondary">
-                    {log.target === "sheets" ? "Sheets" : "Calendar"}
-                  </span>
-                  <div>
-                    <p className="text-sm font-bold">{log.message}</p>
-                    <p className="mt-1 text-xs text-secondary">{formatDateTime(log.createdAt)}</p>
-                  </div>
-                  <span className="text-right text-xs font-bold uppercase text-secondary">
-                    {log.status}
-                  </span>
+              {syncLogs.length === 0 ? (
+                <div className="flex items-center justify-center p-8 text-sm text-secondary">
+                  동기화 이력이 없습니다.
                 </div>
-              ))}
+              ) : (
+                syncLogs.map((log) => (
+                  <div className="grid grid-cols-[150px_1fr_120px] gap-4 px-6 py-4" key={log.id}>
+                    <span className="text-sm font-bold text-secondary">
+                      {log.target === "sheets" ? "Sheets" : "Calendar"}
+                    </span>
+                    <div>
+                      <p className="text-sm font-bold">{log.message}</p>
+                      <p className="mt-1 text-xs text-secondary">{formatDateTime(log.createdAt)}</p>
+                    </div>
+                    <span className="text-right text-xs font-bold uppercase text-secondary">
+                      {log.status}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </Card>
+
+          <Card>
+            <div className="border-b border-border-subtle px-6 py-5 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-bold">기존 데이터 마이그레이션</h3>
+                <p className="mt-1 text-xs text-secondary">이전 시스템의 구글 시트를 CSV로 다운받아 일괄 등록합니다.</p>
+              </div>
+              <Button onClick={() => setShowMigrationModal(true)}>
+                CSV 업로드하기
+              </Button>
             </div>
           </Card>
         </div>
@@ -578,15 +707,15 @@ export function AccountStatusPage({
       {showCalendarModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
-            <h3 className="text-lg font-bold text-primary">신규 캘린더 생성</h3>
-            <p className="mt-1 text-sm text-secondary">구글 계정에 일정 공유용 새 캘린더를 생성합니다.</p>
+            <h3 className="text-lg font-bold text-primary text-left">신규 캘린더 생성</h3>
+            <p className="mt-1 text-sm text-secondary text-left">구글 계정에 일정 공유용 새 캘린더를 생성합니다.</p>
             <div className="mt-4">
-              <label className="block text-xs font-bold text-secondary uppercase tracking-wider">캘린더 이름</label>
+              <label className="block text-xs font-bold text-secondary uppercase tracking-wider text-left">캘린더 이름</label>
               <input
                 autoFocus
                 className="mt-2 w-full rounded border border-border px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
                 onChange={(e) => setNewCalendarTitle(e.target.value)}
-                placeholder="예: 홈쇼핑 방송 일정"
+                placeholder={creatingCalendarType === "broadcast" ? "예: 홈쇼핑 방송 일정" : "예: 홈쇼핑 출고 일정"}
                 type="text"
                 value={newCalendarTitle}
               />
@@ -602,6 +731,14 @@ export function AccountStatusPage({
           </div>
         </div>
       )}
+
+      <MigrationModal
+        isOpen={showMigrationModal}
+        onClose={() => setShowMigrationModal(false)}
+        onSuccess={refreshData}
+        existingChannels={channels}
+        existingPartners={partners}
+      />
     </>
   );
 }

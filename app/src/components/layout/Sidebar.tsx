@@ -11,17 +11,12 @@ export interface NavItem<T extends string = string> {
 interface SidebarProps<T extends string> {
   activePage: T;
   navItems: NavItem<T>[];
-  utilityItems: Array<{
-    label: string;
-    icon: LucideIcon;
-  }>;
   setActivePage: (page: T) => void;
 }
 
 export function Sidebar<T extends string>({
   activePage,
   navItems,
-  utilityItems,
   setActivePage,
 }: SidebarProps<T>) {
   return (
@@ -71,22 +66,7 @@ export function Sidebar<T extends string>({
         })}
       </nav>
 
-      <div className="border-t border-border-subtle px-4 py-5">
-        {utilityItems.map((item) => {
-          const Icon = item.icon;
 
-          return (
-            <button
-              className="flex h-11 w-full items-center gap-3 rounded px-3 text-left text-sm font-medium text-secondary transition hover:bg-surface-container-low hover:text-text-heading"
-              key={item.label}
-              type="button"
-            >
-              <Icon size={20} strokeWidth={1.8} />
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
-      </div>
     </aside>
   );
 }

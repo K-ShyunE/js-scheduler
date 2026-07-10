@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Luminous Broadcast - 홈쇼핑 일정 대시보드</title>
+<!-- Fonts -->
+<script type="text/javascript" nonce="6aff627dcad24557b6efbde13d2" src="//local.adguard.org?ts=1783689883723&amp;type=content-script&amp;dmn=contribution.usercontent.google.com&amp;url=https%3A%2F%2Fcontribution.usercontent.google.com%2Fdownload%3Fc%3DCgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1NjQyZmFhMzExZGEwMzM4NWU2NDc3MWNmOWQyEgsSBxDQkpmIlA4YAZIBJAoKcHJvamVjdF9pZBIWQhQxMTgxODc4MzI5OTI1NzYwNzYxNw%26filename%3D%26opi%3D89354086&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="6aff627dcad24557b6efbde13d2" src="//local.adguard.org?ts=1783689883723&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1b1c1b",
+                        "broadcast-blue": "#1A73E8",
+                        "surface-main": "#FBF9F8",
+                        "on-primary-container": "#62000e",
+                        "surface-tint": "#a93539",
+                        "outline": "#8b7170",
+                        "surface-container-low": "#f5f3f2",
+                        "primary-container": "#f06a6a",
+                        "surface-card": "#FFFFFF",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e4e2e1",
+                        "tertiary-fixed-dim": "#58dea3",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#303030",
+                        "surface-container-high": "#e9e8e7",
+                        "surface": "#fbf9f8",
+                        "text-heading": "#202124",
+                        "on-tertiary-container": "#003522",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#5f6368",
+                        "secondary": "#5b5f64",
+                        "tertiary": "#006c48",
+                        "surface-container": "#efedec",
+                        "surface-container-highest": "#e4e2e1",
+                        "on-surface-variant": "#574140",
+                        "inverse-on-surface": "#f2f0ef",
+                        "surface-bright": "#fbf9f8",
+                        "background": "#fbf9f8",
+                        "border-subtle": "#E5E1E0",
+                        "on-primary-fixed": "#410006",
+                        "secondary-fixed-dim": "#c3c7cc",
+                        "on-secondary": "#ffffff",
+                        "primary": "#a93539",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#ffb3b0",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "tertiary-container": "#00aa74",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "text-body": "#5F6368",
+                        "surface-dim": "#dbdad9",
+                        "on-surface": "#1b1c1b",
+                        "on-secondary-fixed": "#181c20",
+                        "secondary-container": "#dde0e6",
+                        "primary-fixed": "#ffdad8",
+                        "outline-variant": "#debfbe",
+                        "on-primary-fixed-variant": "#881d24",
+                        "tertiary-fixed": "#77fbbd",
+                        "on-tertiary-fixed": "#002113",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#ffb3b0",
+                        "secondary-fixed": "#dfe3e8",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "row-height-dense": "40px",
+                        "sidebar-width": "260px",
+                        "margin-page": "2rem",
+                        "row-height-standard": "56px",
+                        "container-max-width": "1600px",
+                        "gutter": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Hanken Grotesk"],
+                        "title-sm": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "data-tabular": ["Inter"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "label-caps": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "title-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            user-select: none;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fbf9f8;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e5e1e0;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d1cdcc;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+        .calendar-cell {
+            min-height: 120px;
+        }
+    </style>
+</head>
+<body class="bg-surface-main text-on-surface font-body-md overflow-hidden">
+<!-- Side Navigation Shell -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 bg-background border-r border-border-subtle flex flex-col py-6 z-50">
+<div class="px-6 mb-8">
+<h1 class="font-display-lg text-display-lg font-bold text-primary">Luminous Broadcast</h1>
+<p class="text-body-sm text-secondary uppercase tracking-widest mt-1">Management Portal</p>
+</div>
+<button class="mx-6 mb-8 py-3 px-4 bg-primary-container text-on-primary font-bold rounded-lg flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined">add</span>
+        신규 일정 등록
+    </button>
+<nav class="flex-1 space-y-1">
+<!-- Active State: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 border-l-4 border-primary bg-primary/5 text-primary font-bold group transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="">대시보드</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined">edit_calendar</span>
+<span class="">일정 등록</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="">검색 목록</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined">store</span>
+<span class="">홈쇼핑 업체 관리</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors group" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="">계정 상태</span>
+</a>
+</nav>
+<div class="mt-auto px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-secondary hover:text-on-surface hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+<span class="">Support</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] h-screen overflow-y-auto bg-surface-main">
+<!-- Top Navigation Shell -->
+<header class="h-row-height-standard sticky top-0 z-40 bg-surface-card border-b border-border-subtle flex items-center justify-between px-margin-page">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md focus-within:ring-2 focus-within:ring-primary/20 rounded-xl">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl text-body-md focus:ring-0" placeholder="상품명, 업체, 채널 검색..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-tertiary bg-tertiary-fixed/10 px-3 py-1.5 rounded-full">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+<span class="font-data-tabular text-body-sm">Google 연동 완료</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-secondary hover:bg-surface-container-highest rounded-xl transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-8 flex items-center justify-center rounded-full bg-primary text-on-primary font-bold">
+                    S
+                </div>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-margin-page max-w-[1600px] mx-auto space-y-gutter">
+<div class="mb-2">
+<span class="text-primary text-label-caps uppercase tracking-wider font-bold">OPERATIONS DASHBOARD</span>
+<h2 class="text-display-lg font-display-lg mt-1 text-text-heading">홈쇼핑 일정 대시보드</h2>
+<p class="text-body-md text-secondary">상품 판매 일정과 출고 일정을 캘린더에서 한눈에 확인하고, Google 공유 상태를 추적합니다.</p>
+</div>
+<!-- Summary Stats Grid -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="bg-surface-card p-6 border border-border-subtle rounded-xl flex items-start justify-between shadow-sm">
+<div>
+<span class="text-body-sm text-secondary font-label-caps uppercase">총 등록 일정</span>
+<div class="flex items-baseline gap-1 mt-2">
+<span class="text-display-lg font-display-lg text-on-surface">128</span>
+<span class="text-title-sm text-secondary">건</span>
+</div>
+</div>
+<div class="p-3 bg-primary-fixed text-primary rounded-xl">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+</div>
+<div class="bg-surface-card p-6 border border-border-subtle rounded-xl flex items-start justify-between shadow-sm">
+<div>
+<span class="text-body-sm text-secondary font-label-caps uppercase">최근 7일 방송 예정</span>
+<div class="flex items-baseline gap-1 mt-2">
+<span class="text-display-lg font-display-lg text-on-surface">12</span>
+<span class="text-title-sm text-secondary">건</span>
+</div>
+</div>
+<div class="p-3 bg-broadcast-blue/10 text-broadcast-blue rounded-xl">
+<span class="material-symbols-outlined">shopping_cart</span>
+</div>
+</div>
+<div class="bg-surface-card p-6 border border-border-subtle rounded-xl flex items-start justify-between shadow-sm">
+<div>
+<span class="text-body-sm text-secondary font-label-caps uppercase">이번 달 출고 대기</span>
+<div class="flex items-baseline gap-1 mt-2">
+<span class="text-display-lg font-display-lg text-on-surface">08</span>
+<span class="text-title-sm text-secondary">건</span>
+</div>
+</div>
+<div class="p-3 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-xl">
+<span class="material-symbols-outlined">inventory_2</span>
+</div>
+</div>
+<div class="bg-surface-card p-6 border border-border-subtle rounded-xl flex items-start justify-between shadow-sm">
+<div>
+<span class="text-body-sm text-secondary font-label-caps uppercase">동기화 상태</span>
+<div class="flex items-baseline gap-1 mt-2">
+<span class="text-display-lg font-display-lg text-tertiary">정상</span>
+</div>
+</div>
+<div class="p-3 bg-surface-container-high text-secondary rounded-xl">
+<span class="material-symbols-outlined">cloud_done</span>
+</div>
+</div>
+</section>
+<!-- Main Layout Section -->
+<section class="grid grid-cols-1 xl:grid-cols-12 gap-gutter">
+<!-- Full Width Calendar -->
+<div class="xl:col-span-12 bg-surface-card border border-border-subtle rounded-xl overflow-hidden shadow-sm">
+<div class="p-6 border-b border-border-subtle flex items-center justify-between">
+<div class="flex items-center gap-6">
+<h3 class="text-title-sm font-display-lg">2026년 7월</h3>
+<div class="flex items-center border border-border-subtle rounded-lg p-1 bg-surface-container-low">
+<button class="p-1 hover:bg-surface-container-high rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_left</span>
+</button>
+<button class="px-3 py-1 text-body-sm font-semibold hover:bg-surface-container-high rounded transition-colors">오늘</button>
+<button class="p-1 hover:bg-surface-container-high rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 bg-primary text-on-primary text-body-sm font-bold rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                            일정 추가
+                        </button>
+</div>
+</div>
+<div class="calendar-grid border-b border-border-subtle">
+<div class="py-3 text-center text-body-sm font-bold text-primary border-r border-border-subtle bg-surface-container-low">일</div>
+<div class="py-3 text-center text-body-sm font-bold text-secondary border-r border-border-subtle bg-surface-container-low">월</div>
+<div class="py-3 text-center text-body-sm font-bold text-secondary border-r border-border-subtle bg-surface-container-low">화</div>
+<div class="py-3 text-center text-body-sm font-bold text-secondary border-r border-border-subtle bg-surface-container-low">수</div>
+<div class="py-3 text-center text-body-sm font-bold text-secondary border-r border-border-subtle bg-surface-container-low">목</div>
+<div class="py-3 text-center text-body-sm font-bold text-secondary border-r border-border-subtle bg-surface-container-low">금</div>
+<div class="py-3 text-center text-body-sm font-bold text-broadcast-blue bg-surface-container-low">토</div>
+</div>
+<div class="calendar-grid bg-surface-container-low/30">
+<!-- Week 1 Placeholder Empty -->
+<div class="calendar-cell p-2 border-r border-b border-border-subtle bg-surface-container-low/10"></div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle bg-surface-container-low/10"></div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle bg-surface-container-low/10"></div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">1</span>
+</div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">2</span>
+</div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">3</span>
+</div>
+<div class="calendar-cell p-2 border-b border-border-subtle">
+<span class="text-body-sm font-bold text-broadcast-blue">4</span>
+</div>
+<!-- Week 2 -->
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-primary">5</span>
+</div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">6</span>
+</div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">7</span>
+</div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">8</span>
+</div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">9</span>
+</div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle relative bg-primary-fixed/20 ring-1 ring-inset ring-primary/20">
+<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary text-on-primary text-[11px] font-bold">10</span>
+<div class="mt-2 space-y-1">
+<div class="px-2 py-0.5 bg-broadcast-blue/10 text-broadcast-blue text-[10px] rounded truncate font-medium">방송: 출고없이 등록테스트</div>
+<div class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] rounded truncate font-medium">방송: 출고테스트</div>
+</div>
+</div>
+<div class="calendar-cell p-2 border-b border-border-subtle">
+<span class="text-body-sm font-bold text-broadcast-blue">11</span>
+<div class="mt-2">
+<div class="px-2 py-0.5 bg-tertiary-container/10 text-tertiary text-[10px] rounded truncate font-medium">출고: 출고테스트</div>
+</div>
+</div>
+<!-- Week 3 -->
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-primary">12</span>
+</div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">13</span>
+</div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">14</span>
+</div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">15</span>
+</div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">16</span>
+</div>
+<div class="calendar-cell p-2 border-r border-b border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">17</span>
+</div>
+<div class="calendar-cell p-2 border-b border-border-subtle">
+<span class="text-body-sm font-bold text-broadcast-blue">18</span>
+</div>
+<!-- Week 4 -->
+<div class="calendar-cell p-2 border-r border-border-subtle">
+<span class="text-body-sm font-bold text-primary">19</span>
+</div>
+<div class="calendar-cell p-2 border-r border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">20</span>
+</div>
+<div class="calendar-cell p-2 border-r border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">21</span>
+</div>
+<div class="calendar-cell p-2 border-r border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">22</span>
+</div>
+<div class="calendar-cell p-2 border-r border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">23</span>
+</div>
+<div class="calendar-cell p-2 border-r border-border-subtle">
+<span class="text-body-sm font-bold text-secondary">24</span>
+<div class="mt-2">
+<div class="px-2 py-0.5 bg-broadcast-blue/10 text-broadcast-blue text-[10px] rounded truncate font-medium">방송: 출고등록</div>
+</div>
+</div>
+<div class="calendar-cell p-2">
+<span class="text-body-sm font-bold text-broadcast-blue">25</span>
+<div class="mt-2">
+<div class="px-2 py-0.5 bg-tertiary-container/10 text-tertiary text-[10px] rounded truncate font-medium">출고: 출고등록</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Detailed Schedule List for Selected Date -->
+<div class="xl:col-span-12 bg-surface-card border border-border-subtle rounded-xl overflow-hidden shadow-sm">
+<div class="p-6 border-b border-border-subtle flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-primary/10 text-primary rounded-lg">
+<span class="material-symbols-outlined">list_alt</span>
+</div>
+<div>
+<h3 class="text-title-sm font-bold">2026년 7월 10일 상세 일정</h3>
+<p class="text-body-sm text-secondary">선택한 날짜의 전체 방송 및 출고 목록입니다.</p>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse font-data-tabular">
+<thead>
+<tr class="bg-surface-container border-b border-border-subtle">
+<th class="px-6 py-4 font-label-caps text-secondary uppercase whitespace-nowrap">방송날짜</th>
+<th class="px-6 py-4 font-label-caps text-secondary uppercase whitespace-nowrap">업체</th>
+<th class="px-6 py-4 font-label-caps text-secondary uppercase whitespace-nowrap">상품명</th>
+<th class="px-6 py-4 font-label-caps text-secondary uppercase whitespace-nowrap">수량</th>
+<th class="px-6 py-4 font-label-caps text-secondary uppercase whitespace-nowrap">등록일</th>
+<th class="px-6 py-4 font-label-caps text-secondary uppercase whitespace-nowrap text-right">상태</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-semibold text-on-surface">2026-07-10 14:30</td>
+<td class="px-6 py-4 text-secondary">CJ 온스타일</td>
+<td class="px-6 py-4 text-on-surface font-medium">[루미너스] 프리미엄 린넨 셔츠 컬렉션</td>
+<td class="px-6 py-4 font-bold text-primary">1,200</td>
+<td class="px-6 py-4 text-secondary">2026-07-01</td>
+<td class="px-6 py-4 text-right">
+<span class="px-2 py-1 bg-broadcast-blue/10 text-broadcast-blue text-[11px] font-bold rounded">방송예정</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-semibold text-on-surface">2026-07-10 19:00</td>
+<td class="px-6 py-4 text-secondary">GS SHOP</td>
+<td class="px-6 py-4 text-on-surface font-medium">데일리에센셜 쿨링 팬츠 3종 세트</td>
+<td class="px-6 py-4 font-bold text-primary">2,500</td>
+<td class="px-6 py-4 text-secondary">2026-06-28</td>
+<td class="px-6 py-4 text-right">
+<span class="px-2 py-1 bg-primary-container/20 text-primary text-[11px] font-bold rounded">출고준비</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-semibold text-on-surface">2026-07-10 22:45</td>
+<td class="px-6 py-4 text-secondary">롯데홈쇼핑</td>
+<td class="px-6 py-4 text-on-surface font-medium">여름 스페셜 브라이트닝 스킨케어</td>
+<td class="px-6 py-4 font-bold text-primary">850</td>
+<td class="px-6 py-4 text-secondary">2026-07-05</td>
+<td class="px-6 py-4 text-right">
+<span class="px-2 py-1 bg-surface-container-highest text-secondary text-[11px] font-bold rounded">대기중</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 bg-surface-container-low text-center">
+<button class="text-primary font-bold text-body-sm hover:underline flex items-center justify-center gap-1 mx-auto">
+                        전체 일정 보기 <span class="material-symbols-outlined text-[18px]">keyboard_arrow_right</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<script>
+    // Search bar focus effect
+    const searchInput = document.querySelector('input[type="text"]');
+    if (searchInput) {
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary/20');
+        });
+    }
+
+    // Interactive day selection simulation
+    const cells = document.querySelectorAll('.calendar-cell');
+    cells.forEach(cell => {
+        if(cell.innerText.trim() !== "") {
+            cell.classList.add('cursor-pointer', 'hover:bg-surface-container-low', 'transition-colors');
+            cell.addEventListener('click', () => {
+                // Visual feedback for selection
+                cells.forEach(c => c.classList.remove('ring-2', 'ring-primary', 'bg-primary-fixed/20'));
+                cell.classList.add('ring-2', 'ring-primary', 'bg-primary-fixed/10');
+            });
+        }
+    });
+</script>
+</body></html>
