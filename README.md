@@ -76,10 +76,13 @@ docker exec -it js-scheduler-app-1 npm run db:migrate:local
 코드를 Github에 푸시(Push)하여 배포할 때, Cloudflare에 있는 실제 데이터베이스 구조도 동일하게 업데이트해야 합니다. 푸시 직전/직후에 호스트(WSL) 터미널의 `app` 폴더 내에서 아래 명령어를 실행해 주세요:
 
 ```bash
-# 1. (최초 1회) Cloudflare 로그인
+# 1. app 폴더로 이동 (매우 중요!)
+cd app
+
+# 2. (최초 1회) Cloudflare 로그인
 npx wrangler login
 
-# 2. 원격 DB 마이그레이션 실행
+# 3. 원격 DB 마이그레이션 실행
 npx wrangler d1 migrations apply DB --remote
 ```
 
