@@ -120,7 +120,8 @@ export function UserManagementPage({ onLogout }: UserManagementPageProps) {
               className="w-full rounded-md border border-border-subtle bg-background px-4 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-1 focus:ring-primary"
             />
           </div>
-          <Button type="submit" variant="primary" icon={<UserPlus size={18} />}>
+          <Button type="submit" variant="primary">
+            <UserPlus size={18} />
             허용 추가
           </Button>
         </form>

@@ -331,7 +331,7 @@ export function App() {
       activePage={activePage}
       navItems={navItems}
       query={query}
-      setActivePage={setActivePage}
+      setActivePage={(page) => setActivePage(page as AppPage)}
       setQuery={setQuery}
       user={user}
     >

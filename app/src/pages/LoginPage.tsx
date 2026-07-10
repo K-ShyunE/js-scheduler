@@ -1,4 +1,4 @@
-import { CalendarDays, LogIn, Mail, Radio } from "lucide-react";
+import { CalendarDays, LogIn, Mail, Radio, KeyRound, ShieldCheck } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 

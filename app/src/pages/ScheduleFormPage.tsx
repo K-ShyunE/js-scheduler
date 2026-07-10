@@ -122,12 +122,12 @@ export function ScheduleFormPage({ channels, onCreated, partners, user, editingS
         months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
         days: ["일", "월", "화", "수", "목", "금", "토"],
       },
-      setup: (picker) => {
-        picker.on("selected", (date) => {
+      setup: (picker: any) => {
+        picker.on("selected", (date: any) => {
           updateField("saleDate", date.format("YYYY-MM-DD"));
         });
       },
-    });
+    } as any);
     picker.setDate(form.saleDate);
 
     return () => {
@@ -146,12 +146,12 @@ export function ScheduleFormPage({ channels, onCreated, partners, user, editingS
         months: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
         days: ["일", "월", "화", "수", "목", "금", "토"],
       },
-      setup: (picker) => {
-        picker.on("selected", (date) => {
+      setup: (picker: any) => {
+        picker.on("selected", (date: any) => {
           updateField("shipmentDate", date.format("YYYY-MM-DD"));
         });
       },
-    });
+    } as any);
     if (form.shipmentDate) {
       picker.setDate(form.shipmentDate);
     }
@@ -286,9 +286,16 @@ export function ScheduleFormPage({ channels, onCreated, partners, user, editingS
         });
       });
 
+      const draft: ScheduleDraft = {
+        ...parsed.data,
+        brandName: parsed.data.brandName || "",
+        saleEndTime: parsed.data.saleEndTime || "",
+        shipmentDate: parsed.data.shipmentDate || "",
+      };
+
       const result = editingSchedule
-        ? await updateSchedule({ ...parsed.data, id: editingSchedule.id })
-        : await createSchedule(parsed.data);
+        ? await updateSchedule({ ...draft, id: editingSchedule.id })
+        : await createSchedule(draft);
 
       // Map final statuses based on API result
       setSyncTasks(prev => {

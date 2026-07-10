@@ -21,6 +21,8 @@ export const partners: Partner[] = [
     contactName: "김현우",
     contactPhone: "010-1234-5678",
     memo: "생활가전 주력 공급 업체",
+    isActive: true,
+    displayOrder: 0,
   },
   {
     id: "partner_02",
@@ -28,6 +30,8 @@ export const partners: Partner[] = [
     type: "agency",
     contactName: "박지민",
     contactPhone: "010-2222-3344",
+    isActive: true,
+    displayOrder: 1,
   },
   {
     id: "partner_03",
@@ -35,6 +39,8 @@ export const partners: Partner[] = [
     type: "brand",
     contactName: "이서연",
     contactPhone: "010-7744-9088",
+    isActive: true,
+    displayOrder: 2,
   },
 ];
 
