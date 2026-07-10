@@ -14,8 +14,8 @@ export function LoginPage({ errorMessage, isLoading, onDevLogin, onGoogleLogin }
     <main className="grid min-h-screen place-items-center bg-surface-main px-6">
       <section className="w-full max-w-[460px]">
         <div className="mb-8 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 mx-auto mb-6">
-            <Radio className="h-8 w-8 text-primary" />
+          <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-border-subtle">
+            <img src="/logo.png" alt="On-Air Planner Logo" className="h-full w-full object-cover" />
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-text-heading mb-3">
             온에어 플래너
@@ -48,6 +48,16 @@ export function LoginPage({ errorMessage, isLoading, onDevLogin, onGoogleLogin }
           <Button className="mt-3 w-full" disabled={isLoading} onClick={onDevLogin} variant="secondary">
             로컬 개발 로그인
           </Button>
+          
+          <button
+            type="button"
+            onClick={() => {
+              window.location.href = "/api/auth/google/start?force=true";
+            }}
+            className="mt-4 text-[11px] text-secondary/70 underline underline-offset-4 hover:text-primary transition-colors block w-full text-center"
+          >
+            DB 초기화로 인해 동기화 오류가 발생하나요? 강제 재연동하기
+          </button>
         </Card>
       </section>
     </main>

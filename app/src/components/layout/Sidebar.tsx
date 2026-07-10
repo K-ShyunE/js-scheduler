@@ -21,15 +21,18 @@ export function Sidebar<T extends string>({
 }: SidebarProps<T>) {
   return (
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-[260px] flex-col border-r border-border-subtle bg-background">
-      <div className="px-6 pb-5 pt-7">
-        <h1 className="text-[31px] font-extrabold leading-9 text-primary">
-          온에어 플래너
-          <br />
-          Scheduler
-        </h1>
-        <p className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
-          Home Shopping Ops
-        </p>
+      <div className="px-6 pb-5 pt-7 flex items-center gap-3">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-border-subtle">
+          <img src="/logo.png" alt="On-Air Planner Logo" className="h-full w-full object-cover" />
+        </div>
+        <div>
+          <h1 className="text-xl font-extrabold leading-tight text-primary">
+            온에어 플래너
+          </h1>
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-secondary">
+            Home Shopping Ops
+          </p>
+        </div>
       </div>
 
       <button

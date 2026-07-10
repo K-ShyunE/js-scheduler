@@ -27,7 +27,7 @@ export interface GoogleUserInfo {
   picture?: string;
 }
 
-export function getGoogleAuthUrl(env: Env, state: string, redirectUri: string) {
+export function getGoogleAuthUrl(env: Env, state: string, redirectUri: string, forceConsent: boolean = false) {
   assertGoogleEnv(env);
 
   const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
@@ -37,7 +37,9 @@ export function getGoogleAuthUrl(env: Env, state: string, redirectUri: string) {
   url.searchParams.set("scope", oauthScopes.join(" "));
   url.searchParams.set("state", state);
   url.searchParams.set("access_type", "offline");
-  url.searchParams.set("prompt", "consent");
+  if (forceConsent) {
+    url.searchParams.set("prompt", "consent");
+  }
   url.searchParams.set("include_granted_scopes", "true");
 
   return url.toString();
