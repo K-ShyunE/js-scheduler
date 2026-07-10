@@ -73,11 +73,21 @@ docker exec -it js-scheduler-app-1 npm run db:migrate:local
 ```
 
 ### 2. 프로덕션(원격) 환경 마이그레이션
-코드를 Github에 푸시(Push)하여 배포할 때, Cloudflare에 있는 실제 데이터베이스 구조도 동일하게 업데이트해야 합니다. 푸시 직전/직후에 아래 명령어를 실행해 주세요:
+코드를 Github에 푸시(Push)하여 배포할 때, Cloudflare에 있는 실제 데이터베이스 구조도 동일하게 업데이트해야 합니다. 푸시 직전/직후에 호스트(WSL) 터미널의 `app` 폴더 내에서 아래 명령어를 실행해 주세요:
+
 ```bash
-docker exec -it js-scheduler-app-1 npm run db:migrate:remote
+# 1. (최초 1회) Cloudflare 로그인
+npx wrangler login
+
+# 2. 원격 DB 마이그레이션 실행
+npx wrangler d1 migrations apply DB --remote
 ```
-*(주의: 이 과정에서 브라우저 인증 팝업이 뜰 수 있습니다.)*
+
+> [!NOTE]
+> **마이그레이션 작동 원리**
+> - **npx 명령어:** 내 PC에 무언가를 영구 설치하는 것이 아니라, 프로젝트 폴더(`node_modules`)에 설치된 `wrangler` 도구를 1회성으로 안전하게 실행합니다.
+> - **DB 추적 원리:** `app/wrangler.toml` 파일에 적혀있는 `database_id`를 읽어들여 전 세계에 단 하나뿐인 사용자님의 데이터베이스를 찾아갑니다.
+> - **인증 원리:** `npx wrangler login`을 통해 발급된 보안 토큰을 사용하여 안전하게 원격 DB 구조를 변경합니다. 도커(Docker) 컨테이너 내부는 브라우저 창을 띄울 수 없어 로그인이 먹통이 되므로, 안전하고 깔끔한 호스트(WSL) 환경에서 실행하는 것이 권장됩니다.
 
 ## Cloudflare 준비 파일
 
