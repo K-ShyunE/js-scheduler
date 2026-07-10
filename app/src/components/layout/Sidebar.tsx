@@ -23,7 +23,7 @@ export function Sidebar<T extends string>({
     <aside className="fixed left-0 top-0 z-40 flex h-screen w-[260px] flex-col border-r border-border-subtle bg-background">
       <div className="px-6 pb-5 pt-7">
         <h1 className="text-[31px] font-extrabold leading-9 text-primary">
-          Luminous
+          온에어 플래너
           <br />
           Scheduler
         </h1>

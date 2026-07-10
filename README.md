@@ -1,4 +1,4 @@
-# Luminous Scheduler
+# 온에어 플래너 (On-Air Planner)
 
 홈쇼핑 판매 일정과 출고 일정을 관리하는 개인용 업무 도구입니다.
 

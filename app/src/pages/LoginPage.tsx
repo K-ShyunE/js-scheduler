@@ -1,4 +1,4 @@
-import { KeyRound, ShieldCheck } from "lucide-react";
+import { CalendarDays, LogIn, Mail, Radio } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 
@@ -14,8 +14,11 @@ export function LoginPage({ errorMessage, isLoading, onDevLogin, onGoogleLogin }
     <main className="grid min-h-screen place-items-center bg-surface-main px-6">
       <section className="w-full max-w-[460px]">
         <div className="mb-8 text-center">
-          <h1 className="text-[34px] font-extrabold leading-tight text-primary">
-            Luminous Scheduler
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 mx-auto mb-6">
+            <Radio className="h-8 w-8 text-primary" />
+          </div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-text-heading mb-3">
+            온에어 플래너
           </h1>
           <p className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-secondary">
             Home Shopping Ops

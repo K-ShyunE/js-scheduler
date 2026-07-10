@@ -14,6 +14,7 @@
     "build": "tsc -b && vite build",
     "cf:dev": "npm run build && wrangler pages dev dist --d1 DB --env-file .env --port 5173 --ip 0.0.0.0",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
     "db:seed:local": "wrangler d1 execute DB --local --file=seed/dev.sql",
     "preview": "vite preview",
     "lint": "eslint ."
