@@ -62,6 +62,23 @@ npm run build
 프로덕션에서는 `.env` 파일을 업로드하지 않고 Cloudflare Pages의 Variables
 and Secrets에 등록합니다.
 
+## 데이터베이스 마이그레이션 (DB 구조 변경)
+
+앱의 기능이 추가되어 DB 테이블 구조가 변경(마이그레이션)될 경우, 로컬과 원격 DB 모두 업데이트가 필요합니다.
+
+### 1. 로컬(개발) 환경 마이그레이션
+Docker 컨테이너를 구동 중일 때, 아래 명령어로 로컬 DB를 업데이트할 수 있습니다:
+```bash
+docker exec -it js-scheduler-app-1 npm run db:migrate:local
+```
+
+### 2. 프로덕션(원격) 환경 마이그레이션
+코드를 Github에 푸시(Push)하여 배포할 때, Cloudflare에 있는 실제 데이터베이스 구조도 동일하게 업데이트해야 합니다. 푸시 직전/직후에 아래 명령어를 실행해 주세요:
+```bash
+docker exec -it js-scheduler-app-1 npm run db:migrate:remote
+```
+*(주의: 이 과정에서 브라우저 인증 팝업이 뜰 수 있습니다.)*
+
 ## Cloudflare 준비 파일
 
 - [migrations/0001_initial.sql](./migrations/0001_initial.sql): D1 초기 schema.
