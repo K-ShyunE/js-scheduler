@@ -86,16 +86,26 @@ export function App() {
   const loadInitialData = useCallback(async () => {
     try {
       setIsLoading(true);
-      const [nextUser, nextPartners, nextChannels, nextSchedules, nextLogs] =
+      const sessionUser = await getSession();
+      if (!sessionUser) {
+        throw new Error("로그인이 필요합니다.");
+      }
+      
+      // 구버전 로컬 개발 로그인 계정으로 접속된 경우 강제 로그아웃
+      if (sessionUser.id === "dev_user") {
+        await logout();
+        throw new Error("개발 로그인 기능이 제거되었습니다. 다시 로그인해주세요.");
+      }
+
+      const [nextPartners, nextChannels, nextSchedules, nextLogs] =
         await Promise.all([
-          getSession(),
           listPartners(),
           listChannels(),
           listSchedules(),
           listSyncLogs(),
         ]);
 
-      setUser(nextUser);
+      setUser(sessionUser);
       setPartners(nextPartners);
       setChannels(nextChannels);
       setSchedules(nextSchedules);
@@ -103,14 +113,21 @@ export function App() {
       setAuthStatus("authenticated");
       setAuthError(undefined);
     } catch (error) {
-      const authError = new URLSearchParams(window.location.search).get("auth_error");
+      const urlAuthError = new URLSearchParams(window.location.search).get("auth_error");
       setUser(null);
       setPartners([]);
       setChannels([]);
       setSchedules([]);
       setSyncLogs([]);
       setAuthStatus("unauthenticated");
-      setAuthError(authError || (error instanceof Error ? error.message : "로그인이 필요합니다."));
+      
+      let errorMessage = "로그인이 필요합니다.";
+      if (error instanceof Error && error.message !== "로그인이 필요합니다.") {
+        errorMessage = error.message;
+      } else if (urlAuthError) {
+        errorMessage = urlAuthError;
+      }
+      setAuthError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -153,18 +170,6 @@ export function App() {
 
     return () => window.clearTimeout(timeoutId);
   }, [authStatus, query, refreshData]);
-
-  async function handleDevLogin() {
-    try {
-      setIsLoading(true);
-      await devLogin();
-      await loadInitialData();
-    } catch (error) {
-      setAuthError(error instanceof Error ? error.message : "개발 로그인에 실패했습니다.");
-      setAuthStatus("unauthenticated");
-      setIsLoading(false);
-    }
-  }
 
   async function handleLogout() {
     await logout();
@@ -354,7 +359,6 @@ export function App() {
       <LoginPage
         errorMessage={authStatus === "unauthenticated" ? authError : undefined}
         isLoading={isLoading}
-        onDevLogin={handleDevLogin}
         onGoogleLogin={startGoogleLogin}
       />
     );
