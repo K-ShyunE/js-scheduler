@@ -46,6 +46,7 @@ export interface PartnerRow {
   memo: string | null;
   is_active: number;
   display_order: number;
+  deleted_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -57,6 +58,7 @@ export interface ChannelRow {
   type: "home_shopping" | "live_commerce" | "online";
   is_active: number;
   display_order: number;
+  deleted_at: string | null;
   created_at: string;
   updated_at: string;
 }

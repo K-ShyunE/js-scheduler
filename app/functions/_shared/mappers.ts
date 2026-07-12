@@ -14,6 +14,7 @@ export function mapPartner(row: PartnerRow) {
     memo: row.memo ?? undefined,
     isActive: row.is_active === 1,
     displayOrder: row.display_order,
+    deletedAt: row.deleted_at ?? undefined,
   };
 }
 
@@ -25,6 +26,7 @@ export function mapChannel(row: ChannelRow) {
     type: row.type,
     isActive: row.is_active === 1,
     displayOrder: row.display_order,
+    deletedAt: row.deleted_at ?? undefined,
   };
 }
 

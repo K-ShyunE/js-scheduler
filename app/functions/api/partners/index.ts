@@ -101,6 +101,7 @@ export const onRequestPut: AppPagesFunction = async ({ env, request }) => {
       contactName?: string;
       isActive?: boolean;
       displayOrder?: number;
+      deletedAt?: null;
     }>(request);
 
     if (!input.id) {
@@ -121,15 +122,16 @@ export const onRequestPut: AppPagesFunction = async ({ env, request }) => {
     const contactName = input.contactName !== undefined ? (input.contactName.trim() || null) : existing.contact_name;
     const isActive = input.isActive !== undefined ? (input.isActive ? 1 : 0) : existing.is_active;
     const displayOrder = input.displayOrder !== undefined ? input.displayOrder : existing.display_order;
+    const deletedAt = input.deletedAt === null ? null : existing.deleted_at;
 
     await env.DB.prepare(
       `
         UPDATE partners
-        SET name = ?, contact_name = ?, is_active = ?, display_order = ?, updated_at = ?
+        SET name = ?, contact_name = ?, is_active = ?, display_order = ?, deleted_at = ?, updated_at = ?
         WHERE id = ? AND user_id = ?
       `,
     )
-      .bind(name, contactName, isActive, displayOrder, now, input.id, sessionUser.id)
+      .bind(name, contactName, isActive, displayOrder, deletedAt, now, input.id, sessionUser.id)
       .run();
 
     const updated = await env.DB.prepare("SELECT * FROM partners WHERE id = ? AND user_id = ?")

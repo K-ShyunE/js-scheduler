@@ -299,3 +299,25 @@ export async function updatePartner(
   partners[idx] = updated;
   return updated;
 }
+
+export async function deleteChannel(id: string): Promise<{ message: string; softDeleted: boolean }> {
+  await delay(300);
+  console.log("Mock API: deleteChannel", id);
+  return { message: "채널이 삭제되었습니다.", softDeleted: true };
+}
+
+export async function deletePartner(id: string): Promise<{ message: string; softDeleted: boolean }> {
+  await delay(300);
+  console.log("Mock API: deletePartner", id);
+  return { message: "파트너가 삭제되었습니다.", softDeleted: true };
+}
+
+export async function restoreChannel(id: string): Promise<void> {
+  await delay(300);
+  console.log("Mock API: restoreChannel", id);
+}
+
+export async function restorePartner(id: string): Promise<void> {
+  await delay(300);
+  console.log("Mock API: restorePartner", id);
+}

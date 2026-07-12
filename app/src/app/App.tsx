@@ -33,6 +33,10 @@ import {
   updateChannel,
   createPartner,
   updatePartner,
+  deleteChannel,
+  deletePartner,
+  restoreChannel,
+  restorePartner,
   saveGoogleSettings,
 } from "../lib/api";
 import type { Channel, Partner, ScheduleView, SyncLog, User } from "../types/domain";
@@ -202,6 +206,32 @@ export function App() {
     setPartners(nextPartners);
   }
 
+  async function handleDeleteChannel(id: string) {
+    const res = await deleteChannel(id);
+    const nextChannels = await listChannels();
+    setChannels(nextChannels);
+    return res;
+  }
+
+  async function handleDeletePartner(id: string) {
+    const res = await deletePartner(id);
+    const nextPartners = await listPartners();
+    setPartners(nextPartners);
+    return res;
+  }
+
+  async function handleRestoreChannel(id: string) {
+    await restoreChannel(id);
+    const nextChannels = await listChannels();
+    setChannels(nextChannels);
+  }
+
+  async function handleRestorePartner(id: string) {
+    await restorePartner(id);
+    const nextPartners = await listPartners();
+    setPartners(nextPartners);
+  }
+
   async function handleSaveGoogleSettings(
     spreadsheetId: string | null,
     calendarId: string | null,
@@ -293,6 +323,10 @@ export function App() {
           onUpdateChannel={handleUpdateChannel}
           onCreatePartner={handleCreatePartner}
           onUpdatePartner={handleUpdatePartner}
+          onDeleteChannel={handleDeleteChannel}
+          onDeletePartner={handleDeletePartner}
+          onRestoreChannel={handleRestoreChannel}
+          onRestorePartner={handleRestorePartner}
         />
       );
     }

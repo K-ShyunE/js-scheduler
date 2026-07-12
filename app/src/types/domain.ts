@@ -37,6 +37,7 @@ export interface Partner {
   memo?: string;
   isActive: boolean;
   displayOrder: number;
+  deletedAt?: string | null;
 }
 
 export interface Channel {
@@ -46,6 +47,7 @@ export interface Channel {
   type: ChannelType;
   isActive: boolean;
   displayOrder: number;
+  deletedAt?: string | null;
 }
 
 export interface Product {

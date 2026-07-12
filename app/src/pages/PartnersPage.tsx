@@ -12,6 +12,10 @@ interface PartnersPageProps {
   onUpdateChannel: (id: string, updates: { name?: string; alias?: string; isActive?: boolean; displayOrder?: number }) => Promise<void>;
   onCreatePartner: (name: string, alias?: string) => Promise<void>;
   onUpdatePartner: (id: string, updates: { name?: string; alias?: string; isActive?: boolean; displayOrder?: number }) => Promise<void>;
+  onDeleteChannel: (id: string) => Promise<{ message: string; softDeleted: boolean }>;
+  onDeletePartner: (id: string) => Promise<{ message: string; softDeleted: boolean }>;
+  onRestoreChannel: (id: string) => Promise<void>;
+  onRestorePartner: (id: string) => Promise<void>;
 }
 
 export function PartnersPage({
@@ -21,10 +25,15 @@ export function PartnersPage({
   onUpdateChannel,
   onCreatePartner,
   onUpdatePartner,
+  onDeleteChannel,
+  onDeletePartner,
+  onRestoreChannel,
+  onRestorePartner,
 }: PartnersPageProps) {
   const [activeTab, setActiveTab] = useState<"channels" | "partners">("channels");
-  const activeChannels = channels.filter((channel) => channel.isActive);
-  const activePartners = partners.filter((partner) => partner.isActive);
+  const [showTrash, setShowTrash] = useState(false);
+  const activeChannels = channels.filter((channel) => channel.isActive && !channel.deletedAt);
+  const activePartners = partners.filter((partner) => partner.isActive && !partner.deletedAt);
 
   // Channels drag and drop local state
   const [localChannels, setLocalChannels] = useState<Channel[]>([]);
@@ -32,9 +41,10 @@ export function PartnersPage({
 
   // Sync channels with props
   useEffect(() => {
-    const sorted = [...channels].sort((a, b) => a.displayOrder - b.displayOrder);
+    const filtered = channels.filter((c) => (showTrash ? !!c.deletedAt : !c.deletedAt));
+    const sorted = [...filtered].sort((a, b) => a.displayOrder - b.displayOrder);
     setLocalChannels(sorted);
-  }, [channels]);
+  }, [channels, showTrash]);
 
   // Channels edit state
   const [newChannelName, setNewChannelName] = useState("");
@@ -54,7 +64,8 @@ export function PartnersPage({
 
   // Sync partners with props & sort settings
   useEffect(() => {
-    const sorted = [...partners];
+    const filtered = partners.filter((p) => (showTrash ? !!p.deletedAt : !p.deletedAt));
+    const sorted = [...filtered];
     if (partnerSortBy === "custom") {
       sorted.sort((a, b) => a.displayOrder - b.displayOrder);
     } else {
@@ -67,7 +78,7 @@ export function PartnersPage({
       });
     }
     setLocalPartners(sorted);
-  }, [partners, partnerSortBy, partnerSortOrder]);
+  }, [partners, partnerSortBy, partnerSortOrder, showTrash]);
 
   // Partners edit state
   const [newPartnerName, setNewPartnerName] = useState("");
@@ -205,6 +216,26 @@ export function PartnersPage({
     }
   }
 
+  async function handleDeleteChannelClick(id: string, name: string) {
+    if (!window.confirm(`'${name}' 채널을 삭제하시겠습니까?\n\n이미 일정에 사용 중인 채널은 숨김(Soft Delete) 처리됩니다.`)) return;
+    try {
+      const res = await onDeleteChannel(id);
+      alert(res.message);
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "삭제 중 오류가 발생했습니다.");
+    }
+  }
+
+  async function handleDeletePartnerClick(id: string, name: string) {
+    if (!window.confirm(`'${name}' 파트너를 삭제하시겠습니까?\n\n이미 일정/상품에 사용 중인 파트너는 숨김(Soft Delete) 처리됩니다.`)) return;
+    try {
+      const res = await onDeletePartner(id);
+      alert(res.message);
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "삭제 중 오류가 발생했습니다.");
+    }
+  }
+
   return (
     <>
       <PageHeader
@@ -237,6 +268,18 @@ export function PartnersPage({
           <Handshake size={18} />
           비즈니스 파트너 관리
         </button>
+
+        <div className="ml-auto flex items-center">
+          <label className="flex items-center gap-2 cursor-pointer text-sm font-bold text-secondary hover:text-primary transition">
+            <input
+              type="checkbox"
+              checked={showTrash}
+              onChange={(e) => setShowTrash(e.target.checked)}
+              className="rounded text-primary border-border focus:ring-primary w-4 h-4"
+            />
+            휴지통 보기
+          </label>
+        </div>
       </div>
 
       {activeTab === "channels" ? (
@@ -380,7 +423,24 @@ export function PartnersPage({
                             </Button>
                           </div>
                         ) : (
-                          <div className="flex justify-end min-w-[120px] whitespace-nowrap">
+                          <div className="flex justify-end gap-2 min-w-[120px] whitespace-nowrap">
+                            {showTrash ? (
+                              <Button
+                                className="h-8 px-3 text-xs whitespace-nowrap hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200"
+                                onClick={() => onRestoreChannel(channel.id)}
+                                variant="secondary"
+                              >
+                                복구
+                              </Button>
+                            ) : (
+                              <Button
+                                className="h-8 px-3 text-xs whitespace-nowrap hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                                onClick={() => handleDeleteChannelClick(channel.id, channel.name)}
+                                variant="secondary"
+                              >
+                                삭제
+                              </Button>
+                            )}
                             <Button
                               className="h-8 px-3 text-xs whitespace-nowrap"
                               onClick={() => {
@@ -565,7 +625,24 @@ export function PartnersPage({
                             </Button>
                           </div>
                         ) : (
-                          <div className="flex justify-end min-w-[120px] whitespace-nowrap">
+                          <div className="flex justify-end gap-2 min-w-[120px] whitespace-nowrap">
+                            {showTrash ? (
+                              <Button
+                                className="h-8 px-3 text-xs whitespace-nowrap hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200"
+                                onClick={() => onRestorePartner(partner.id)}
+                                variant="secondary"
+                              >
+                                복구
+                              </Button>
+                            ) : (
+                              <Button
+                                className="h-8 px-3 text-xs whitespace-nowrap hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                                onClick={() => handleDeletePartnerClick(partner.id, partner.name)}
+                                variant="secondary"
+                              >
+                                삭제
+                              </Button>
+                            )}
                             <Button
                               className="h-8 px-3 text-xs whitespace-nowrap"
                               onClick={() => {

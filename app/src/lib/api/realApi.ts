@@ -97,7 +97,31 @@ export async function createPartner(name: string, alias?: string): Promise<Partn
   return apiPost<Partner>("/api/partners", { name, contactName: alias });
 }
 
-export async function updatePartner(id: string, updates: { name?: string; alias?: string }): Promise<Partner> {
+export async function updatePartner(id: string, updates: { name?: string; alias?: string; deletedAt?: null }): Promise<Partner> {
   const { alias, ...rest } = updates;
   return apiPut<Partner>("/api/partners", { id, contactName: alias, ...rest });
+}
+
+export async function deleteChannel(id: string): Promise<{ message: string; softDeleted: boolean }> {
+  const response = await fetch(`/api/channels/${id}`, { method: "DELETE" });
+  if (!response.ok) throw new Error("채널 삭제에 실패했습니다.");
+  const payload = await response.json() as any;
+  if (payload.error) throw new Error(payload.error.message || "채널 삭제에 실패했습니다.");
+  return payload.data || payload;
+}
+
+export async function deletePartner(id: string): Promise<{ message: string; softDeleted: boolean }> {
+  const response = await fetch(`/api/partners/${id}`, { method: "DELETE" });
+  if (!response.ok) throw new Error("파트너 삭제에 실패했습니다.");
+  const payload = await response.json() as any;
+  if (payload.error) throw new Error(payload.error.message || "파트너 삭제에 실패했습니다.");
+  return payload.data || payload;
+}
+
+export async function restoreChannel(id: string): Promise<Channel> {
+  return apiPut<Channel>("/api/channels", { id, deletedAt: null });
+}
+
+export async function restorePartner(id: string): Promise<Partner> {
+  return apiPut<Partner>("/api/partners", { id, deletedAt: null });
 }

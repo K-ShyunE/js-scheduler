@@ -43,8 +43,8 @@ const initialForm = (defaultChannelId = "", defaultPartnerId = ""): ScheduleDraf
 });
 
 export function ScheduleFormPage({ channels, onCreated, partners, user, editingSchedule, onCancel }: ScheduleFormPageProps) {
-  const activeChannels = channels.filter((c) => c.isActive || (editingSchedule && c.id === editingSchedule.channelId));
-  const activePartners = partners.filter((p) => p.isActive || (editingSchedule && p.id === editingSchedule.partnerId));
+  const activeChannels = channels.filter((c) => (c.isActive && !c.deletedAt) || (editingSchedule && c.id === editingSchedule.channelId));
+  const activePartners = partners.filter((p) => (p.isActive && !p.deletedAt) || (editingSchedule && p.id === editingSchedule.partnerId));
 
   const defaultChannelId = activeChannels[0]?.id || "";
   const defaultPartnerId = activePartners[0]?.id || "";

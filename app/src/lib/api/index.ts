@@ -26,3 +26,7 @@ export const createChannel = api.createChannel;
 export const updateChannel = api.updateChannel;
 export const createPartner = api.createPartner;
 export const updatePartner = api.updatePartner;
+export const deleteChannel = api.deleteChannel;
+export const deletePartner = api.deletePartner;
+export const restoreChannel = api.restoreChannel;
+export const restorePartner = api.restorePartner;
