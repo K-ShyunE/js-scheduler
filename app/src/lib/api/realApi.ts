@@ -32,12 +32,20 @@ export async function listChannels(): Promise<Channel[]> {
   return apiGet<Channel[]>("/api/channels");
 }
 
-export async function listSchedules(query = ""): Promise<ScheduleView[]> {
+export async function listSchedules(
+  query = "",
+  channelId?: string,
+  partnerId?: string,
+  sortBy?: string,
+  sortOrder?: "ASC" | "DESC"
+): Promise<ScheduleView[]> {
   const search = new URLSearchParams();
 
-  if (query.trim()) {
-    search.set("query", query.trim());
-  }
+  if (query.trim()) search.set("query", query.trim());
+  if (channelId) search.set("channelId", channelId);
+  if (partnerId) search.set("partnerId", partnerId);
+  if (sortBy) search.set("sortBy", sortBy);
+  if (sortOrder) search.set("sortOrder", sortOrder);
 
   return apiGet<ScheduleView[]>(`/api/schedules${search.size ? `?${search}` : ""}`);
 }

@@ -53,33 +53,56 @@ export const onRequestGet: AppPagesFunction = async ({ env, request }) => {
   try {
     const url = new URL(request.url);
     const query = url.searchParams.get("query")?.trim().toLowerCase();
+    const channelId = url.searchParams.get("channelId")?.trim();
+    const partnerId = url.searchParams.get("partnerId")?.trim();
+    const sortBy = url.searchParams.get("sortBy")?.trim() || "createdAt";
+    const sortOrder = url.searchParams.get("sortOrder")?.trim().toUpperCase() === "ASC" ? "ASC" : "DESC";
 
-    const baseSql = `
+    let baseSql = `
       ${scheduleViewSelect}
       WHERE schedules.created_by = ?
-      ${
-        query
-          ? `
-              AND (
-                LOWER(products.name) LIKE ?
-                OR LOWER(products.brand_name) LIKE ?
-                OR LOWER(partners.name) LIKE ?
-                OR LOWER(channels.name) LIKE ?
-                OR LOWER(COALESCE(schedules.memo, '')) LIKE ?
-              )
-            `
-          : ""
-      }
-      ORDER BY schedules.sale_date ASC, schedules.sale_start_time ASC
     `;
 
+    const bindings: any[] = [sessionUser.id];
+
+    if (query) {
+      baseSql += `
+        AND (
+          LOWER(products.name) LIKE ?
+          OR LOWER(products.brand_name) LIKE ?
+          OR LOWER(partners.name) LIKE ?
+          OR LOWER(channels.name) LIKE ?
+          OR LOWER(COALESCE(schedules.memo, '')) LIKE ?
+        )
+      `;
+      const wildcard = `%${query}%`;
+      bindings.push(wildcard, wildcard, wildcard, wildcard, wildcard);
+    }
+
+    if (channelId) {
+      baseSql += ` AND schedules.channel_id = ?`;
+      bindings.push(channelId);
+    }
+
+    if (partnerId) {
+      baseSql += ` AND schedules.partner_id = ?`;
+      bindings.push(partnerId);
+    }
+
+    let orderClause = "";
+    if (sortBy === "saleDate") {
+      orderClause = `ORDER BY schedules.sale_date ${sortOrder}, schedules.sale_start_time ${sortOrder}`;
+    } else if (sortBy === "shipmentDate") {
+      // Handle NULL shipment_date cases
+      orderClause = `ORDER BY schedules.shipment_date ${sortOrder} NULLS LAST`;
+    } else {
+      orderClause = `ORDER BY schedules.created_at ${sortOrder}`;
+    }
+
+    baseSql += ` ${orderClause}`;
+
     const statement = env.DB.prepare(baseSql);
-    const wildcard = `%${query ?? ""}%`;
-    const { results } = query
-      ? await statement
-          .bind(sessionUser.id, wildcard, wildcard, wildcard, wildcard, wildcard)
-          .all<ScheduleViewRow>()
-      : await statement.bind(sessionUser.id).all<ScheduleViewRow>();
+    const { results } = await statement.bind(...bindings).all<ScheduleViewRow>();
 
     return json({ data: results.map(mapScheduleView) });
   } catch (error) {
@@ -255,17 +278,22 @@ export const onRequestPost: AppPagesFunction = async ({ env, request }) => {
         // Google Calendar 방송일정 동기화 수행
         if (hasCalendarTarget && accessToken) {
           try {
-            const startDateTime = `${data.saleDate}T${data.saleStartTime}:00`;
-            const endDateTime = `${data.saleDate}T${data.saleEndTime || data.saleStartTime}:00`;
+            const startDate = data.saleDate;
+            const sDate = new Date(`${startDate}T00:00:00`);
+            sDate.setDate(sDate.getDate() + 1);
+            const endDate = `${sDate.getFullYear()}-${String(sDate.getMonth() + 1).padStart(2, "0")}-${String(sDate.getDate()).padStart(2, "0")}`;
 
             const broadcastTitle = `[${channelAlias}_${partnerAlias}] ${data.productName}`;
-            const broadcastDescription = `제품: ${data.productName}\n홈쇼핑: ${channelName}\n업체: ${partnerName}\n수량: ${data.quantity}`;
+            const timeString = data.saleEndTime ? `${data.saleStartTime} ~ ${data.saleEndTime}` : data.saleStartTime;
+            const brandString = resolvedBrandName && resolvedBrandName !== partnerName ? `\n브랜드: ${resolvedBrandName}` : '';
+            const memoString = data.memo ? `\n메모: ${data.memo}` : '';
+            const broadcastDescription = `방송시간: ${timeString}\n제품: ${data.productName}${brandString}\n홈쇼핑: ${channelName}\n업체: ${partnerName}\n수량: ${data.quantity}${memoString}`;
 
             googleCalendarEventId = await createGoogleCalendarEvent(accessToken, connection.calendar_id!, {
               title: broadcastTitle,
               description: broadcastDescription,
-              startDateTime,
-              endDateTime,
+              startDate,
+              endDate,
             });
 
             await env.DB.prepare(
@@ -305,7 +333,10 @@ export const onRequestPost: AppPagesFunction = async ({ env, request }) => {
             const [year, month, day] = data.saleDate.split("-");
             const formattedSaleDate = `${parseInt(month, 10)}/${parseInt(day, 10)}`;
             const shipmentTitle = `[${channelAlias}_${partnerAlias}] ${formattedSaleDate} ${data.productName}`;
-            const shipmentDescription = `제품: ${data.productName}\n홈쇼핑: ${channelName}\n업체: ${partnerName}\n수량: ${data.quantity}`;
+            
+            const brandString = resolvedBrandName && resolvedBrandName !== partnerName ? `\n브랜드: ${resolvedBrandName}` : '';
+            const memoString = data.memo ? `\n메모: ${data.memo}` : '';
+            const shipmentDescription = `제품: ${data.productName}${brandString}\n홈쇼핑: ${channelName}\n업체: ${partnerName}\n수량: ${data.quantity}${memoString}`;
 
             googleCalendarShipmentEventId = await createGoogleCalendarEvent(accessToken, connection.shipment_calendar_id!, {
               title: shipmentTitle,
@@ -562,25 +593,30 @@ export const onRequestPut: AppPagesFunction = async ({ env, request }) => {
         // Google Calendar 방송일정 동기화 수행
         if (hasCalendarTarget && accessToken) {
           try {
-            const startDateTime = `${data.saleDate}T${data.saleStartTime}:00`;
-            const endDateTime = `${data.saleDate}T${data.saleEndTime || data.saleStartTime}:00`;
+            const startDate = data.saleDate;
+            const sDate = new Date(`${startDate}T00:00:00`);
+            sDate.setDate(sDate.getDate() + 1);
+            const endDate = `${sDate.getFullYear()}-${String(sDate.getMonth() + 1).padStart(2, "0")}-${String(sDate.getDate()).padStart(2, "0")}`;
 
             const broadcastTitle = `[${channelAlias}_${partnerAlias}] ${data.productName}`;
-            const broadcastDescription = `제품: ${data.productName}\n홈쇼핑: ${channelName}\n업체: ${partnerName}\n수량: ${data.quantity}`;
+            const timeString = data.saleEndTime ? `${data.saleStartTime} ~ ${data.saleEndTime}` : data.saleStartTime;
+            const brandString = resolvedBrandName && resolvedBrandName !== partnerName ? `\n브랜드: ${resolvedBrandName}` : '';
+            const memoString = data.memo ? `\n메모: ${data.memo}` : '';
+            const broadcastDescription = `방송시간: ${timeString}\n제품: ${data.productName}${brandString}\n홈쇼핑: ${channelName}\n업체: ${partnerName}\n수량: ${data.quantity}${memoString}`;
 
             if (googleCalendarEventId) {
               await updateGoogleCalendarEvent(accessToken, connection.calendar_id!, googleCalendarEventId, {
                 title: broadcastTitle,
                 description: broadcastDescription,
-                startDateTime,
-                endDateTime,
+                startDate,
+                endDate,
               });
             } else {
               googleCalendarEventId = await createGoogleCalendarEvent(accessToken, connection.calendar_id!, {
                 title: broadcastTitle,
                 description: broadcastDescription,
-                startDateTime,
-                endDateTime,
+                startDate,
+                endDate,
               });
             }
 
@@ -622,7 +658,10 @@ export const onRequestPut: AppPagesFunction = async ({ env, request }) => {
               const [year, month, day] = data.saleDate.split("-");
               const formattedSaleDate = `${parseInt(month, 10)}/${parseInt(day, 10)}`;
               const shipmentTitle = `[${channelAlias}_${partnerAlias}] ${formattedSaleDate} ${data.productName}`;
-              const shipmentDescription = `제품: ${data.productName}\n홈쇼핑: ${channelName}\n업체: ${partnerName}\n수량: ${data.quantity}`;
+              
+              const brandString = resolvedBrandName && resolvedBrandName !== partnerName ? `\n브랜드: ${resolvedBrandName}` : '';
+              const memoString = data.memo ? `\n메모: ${data.memo}` : '';
+              const shipmentDescription = `제품: ${data.productName}${brandString}\n홈쇼핑: ${channelName}\n업체: ${partnerName}\n수량: ${data.quantity}${memoString}`;
 
               if (googleCalendarShipmentEventId) {
                 await updateGoogleCalendarEvent(accessToken, connection.shipment_calendar_id!, googleCalendarShipmentEventId, {

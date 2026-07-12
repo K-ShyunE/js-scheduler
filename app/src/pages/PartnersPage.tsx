@@ -266,7 +266,7 @@ export function PartnersPage({
           }`}
         >
           <Handshake size={18} />
-          비즈니스 파트너 관리
+          업체 관리
         </button>
 
         <div className="ml-auto flex items-center">
@@ -300,7 +300,7 @@ export function PartnersPage({
                   <th className="px-6 py-4 w-[80px]">순서</th>
                   <th className="px-4 py-4 w-[100px]">상태</th>
                   <th className="px-4 py-4">채널 이름</th>
-                  <th className="px-4 py-4">에일리어스 (단축명)</th>
+                  <th className="px-4 py-4">약칭</th>
                   <th className="px-6 py-4 text-right w-[150px]">관리</th>
                 </tr>
               </thead>
@@ -328,7 +328,7 @@ export function PartnersPage({
                     <input
                       className="w-full max-w-[180px] rounded border border-border px-3 py-1.5 text-sm bg-white focus:outline-none"
                       onChange={(e) => setNewChannelAlias(e.target.value)}
-                      placeholder="에일리어스..."
+                      placeholder="약칭 입력..."
                       value={newChannelAlias}
                     />
                   </td>
@@ -466,7 +466,7 @@ export function PartnersPage({
         <Card className="w-full">
           <div className="flex items-center justify-between border-b border-border-subtle px-6 py-5">
             <div>
-              <h3 className="text-lg font-bold">비즈니스 파트너 목록</h3>
+              <h3 className="text-lg font-bold">업체 관리</h3>
               <p className="mt-1 text-sm text-secondary">
                 {activePartners.length}개의 활성 파트너가 등록되어 있습니다. (행을 드래그하여 순서를 변경하거나 정렬할 수 있습니다.)
               </p>
@@ -501,8 +501,8 @@ export function PartnersPage({
                 <tr>
                   <th className="px-6 py-4 w-[80px]">순서</th>
                   <th className="px-4 py-4 w-[100px]">상태</th>
-                  <th className="px-4 py-4">파트너 이름</th>
-                  <th className="px-4 py-4">약칭 (에일리어스)</th>
+                  <th className="px-4 py-4">업체</th>
+                  <th className="px-4 py-4">약칭</th>
                   <th className="px-6 py-4 text-right w-[150px]">관리</th>
                 </tr>
               </thead>

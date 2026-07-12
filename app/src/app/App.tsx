@@ -3,6 +3,7 @@ import {
   CalendarPlus,
   LayoutDashboard,
   Link2,
+  List,
   PackageSearch,
   Search,
   Settings,
@@ -33,6 +34,7 @@ import {
   updateChannel,
   createPartner,
   updatePartner,
+  updateSchedule,
   deleteChannel,
   deletePartner,
   restoreChannel,
@@ -41,12 +43,12 @@ import {
 } from "../lib/api";
 import type { Channel, Partner, ScheduleView, SyncLog, User } from "../types/domain";
 
-export type AppPage = "dashboard" | "create" | "search" | "partners" | "account" | "users";
+export type AppPage = "dashboard" | "create" | "schedules" | "partners" | "account" | "users";
 
 const baseNavItems: NavItem<AppPage>[] = [
   { id: "dashboard", label: "대시보드", icon: LayoutDashboard },
   { id: "create", label: "일정 등록", icon: CalendarPlus },
-  { id: "search", label: "검색 목록", icon: Search },
+  { id: "schedules", label: "일정 목록", icon: List },
   { id: "partners", label: "홈쇼핑 업체 관리", icon: Store },
   { id: "account", label: "계정 상태", icon: UserCircle },
 ];
@@ -55,12 +57,16 @@ export function App() {
   const getInitialPage = (): AppPage => {
     const hash = window.location.hash.replace("#/", "").replace("#", "");
     if (!hash || hash === "login") return "create";
-    const validPages: AppPage[] = ["dashboard", "create", "search", "partners", "account", "users"];
+    const validPages: AppPage[] = ["dashboard", "create", "schedules", "partners", "account", "users"];
     return validPages.includes(hash as AppPage) ? (hash as AppPage) : "create";
   };
 
   const [activePage, setActivePage] = useState<AppPage>(getInitialPage);
   const [query, setQuery] = useState("");
+  const [channelFilter, setChannelFilter] = useState("");
+  const [partnerFilter, setPartnerFilter] = useState("");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
   const [user, setUser] = useState<User | null>(null);
   const [editingSchedule, setEditingSchedule] = useState<ScheduleView | null>(null);
   const [schedules, setSchedules] = useState<ScheduleView[]>([]);
@@ -73,9 +79,15 @@ export function App() {
   );
   const [authError, setAuthError] = useState<string | undefined>();
 
-  const refreshData = useCallback(async (nextQuery: string) => {
+  const refreshData = useCallback(async (
+    nextQuery: string,
+    nextChannel?: string,
+    nextPartner?: string,
+    nextSortBy?: string,
+    nextSortOrder?: "ASC" | "DESC"
+  ) => {
     const [nextSchedules, nextLogs] = await Promise.all([
-      listSchedules(nextQuery),
+      listSchedules(nextQuery, nextChannel, nextPartner, nextSortBy, nextSortOrder),
       listSyncLogs(),
     ]);
 
@@ -150,7 +162,7 @@ export function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace("#/", "").replace("#", "");
-      const validPages: AppPage[] = ["dashboard", "create", "search", "partners", "account", "users"];
+      const validPages: AppPage[] = ["dashboard", "create", "schedules", "partners", "account", "users"];
       if (hash && validPages.includes(hash as AppPage) && hash !== activePage) {
         setActivePage(hash as AppPage);
       }
@@ -165,11 +177,11 @@ export function App() {
     }
 
     const timeoutId = window.setTimeout(() => {
-      void refreshData(query);
+      void refreshData(query, channelFilter, partnerFilter, sortBy, sortOrder);
     }, 180);
 
     return () => window.clearTimeout(timeoutId);
-  }, [authStatus, query, refreshData]);
+  }, [authStatus, query, channelFilter, partnerFilter, sortBy, sortOrder, refreshData]);
 
   async function handleLogout() {
     await logout();
@@ -300,20 +312,46 @@ export function App() {
           onCreated={async () => {
             await refreshData("");
             setQuery("");
-            setActivePage("search");
+            setActivePage("schedules");
           }}
         />
       );
     }
 
-    if (activePage === "search") {
+    if (activePage === "schedules") {
       return (
         <ScheduleListPage
           schedules={schedules}
           query={query}
           setQuery={setQuery}
+          channels={channels}
+          partners={partners}
+          channelFilter={channelFilter}
+          setChannelFilter={setChannelFilter}
+          partnerFilter={partnerFilter}
+          setPartnerFilter={setPartnerFilter}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
           onEdit={(schedule) => {
             setEditingSchedule(schedule);
+          }}
+          onSync={async (schedule) => {
+            await updateSchedule({
+              id: schedule.id,
+              productName: schedule.product.name,
+              brandName: schedule.product.brandName,
+              partnerId: schedule.partner.id,
+              channelId: schedule.channel.id,
+              saleDate: schedule.saleDate,
+              saleStartTime: schedule.saleStartTime,
+              saleEndTime: schedule.saleEndTime,
+              shipmentDate: schedule.shipmentDate || "",
+              quantity: schedule.quantity,
+              memo: schedule.memo || "",
+            });
+            void refreshData(query, channelFilter, partnerFilter, sortBy, sortOrder);
           }}
         />
       );
