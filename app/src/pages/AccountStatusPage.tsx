@@ -423,7 +423,7 @@ export function AccountStatusPage({
                           <div className="text-[10px] text-secondary mt-0.5">{formatDateTime(log.createdAt)}</div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`text-[10px] font-bold ${log.status === "SUCCESS" ? "text-tertiary" : "text-error"}`}>
+                          <span className={`text-[10px] font-bold uppercase ${log.status === "success" ? "text-tertiary" : "text-error"}`}>
                             {log.status}
                           </span>
                         </td>
