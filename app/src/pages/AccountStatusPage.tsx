@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CalendarCheck, CloudOff, FileSpreadsheet, KeyRound, RefreshCw, CheckCircle2, AlertCircle, Plus, Folder, ChevronRight, ArrowLeft, ChevronDown } from "lucide-react";
+import { CalendarCheck, CloudOff, FileSpreadsheet, KeyRound, RefreshCw, CheckCircle2, AlertCircle, Plus, Folder, ChevronRight, ArrowLeft, ChevronDown, User as UserIcon, UploadCloud, FileText } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { PageHeader } from "../components/ui/PageHeader";
@@ -215,344 +215,231 @@ export function AccountStatusPage({
 
   return (
     <>
-      <PageHeader
-        description="Google 로그인, 허용 이메일, Sheets/Calendar 연동 상태를 확인하고 동기화할 대상을 선택합니다."
-        eyebrow="Account"
-        title="계정 상태 관리"
-      />
-
-      <div className="mb-6 flex justify-end">
-        {isGoogleConnected ? (
-          <div className="inline-flex items-center gap-2 rounded border border-tertiary-soft bg-white px-4 py-3 text-sm font-bold text-tertiary shadow-sm">
-            <CheckCircle2 size={18} />
-            OAuth 연동 완료
-          </div>
-        ) : (
-          <div className="inline-flex items-center gap-2 rounded border border-border-subtle bg-white px-4 py-3 text-sm font-bold text-error shadow-sm">
-            <CloudOff size={18} />
-            OAuth 미연결
-          </div>
-        )}
-        <Button className="ml-3" onClick={onLogout} variant="secondary">
-          로그아웃
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-[380px_1fr] gap-6">
-        <div className="space-y-6">
-          <Card className="p-8 text-center">
-            {isGoogleConnected ? (
-              <>
-                <div className="mx-auto grid h-20 w-20 place-items-center rounded-lg bg-tertiary-soft text-tertiary">
-                  <CheckCircle2 size={34} />
-                </div>
-                <h3 className="mt-6 text-xl font-extrabold">Google 계정 연결됨</h3>
-                <p className="mt-3 text-sm leading-6 text-secondary">
-                  현재 구글 로그인 상태입니다. Sheets 및 Calendar 연동 기능을 사용할 수 있습니다.
-                </p>
-                <div className="mt-6 rounded-lg bg-surface-container p-4 text-left">
-                  <p className="text-xs font-bold text-secondary uppercase tracking-wider">연동된 이메일</p>
-                  <p className="mt-1 font-bold text-primary truncate">{user?.googleEmail}</p>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="mx-auto grid h-20 w-20 place-items-center rounded-lg bg-surface-container text-secondary">
-                  <KeyRound size={34} />
-                </div>
-                <h3 className="mt-6 text-xl font-extrabold">Google 계정 연결 대기</h3>
-                <p className="mt-3 text-sm leading-6 text-secondary">
-                  구글 계정을 연결하여 Sheets 및 Calendar 자동 동기화 대상을 설정할 수 있습니다.
-                </p>
-                <Button className="mt-6 w-full" onClick={onGoogleLogin}>
-                  <RefreshCw size={18} />
-                  Google 계정으로 연결하기
-                </Button>
-              </>
-            )}
-          </Card>
-
-          <Card className="bg-[#1f2020] p-6 text-white">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/50">
-              Current Session
-            </p>
-            <p className="mt-4 text-lg font-bold">{user?.name ?? "사용자"}</p>
-            <p className="mt-1 text-sm text-white/65">{user?.email ?? "이메일 정보 없음"}</p>
-          </Card>
+      {/* Page Header */}
+      <div className="font-body-md text-body-md text-on-surface">
+        <div className="mb-8">
+          <h2 className="font-display-lg text-display-lg text-on-surface mb-2">계정 상태 관리</h2>
+          <p className="text-secondary font-body-md">Google 서비스 연동 및 방송 자동화 데이터를 관리합니다.</p>
         </div>
 
-        <div className="space-y-6">
-          {isGoogleConnected ? (
-            <Card className="p-6">
-              <h3 className="text-lg font-bold border-b border-border-subtle pb-4">Google 연동 설정</h3>
+        <div className="space-y-gutter">
+          {/* SECTION 1: Google Account Connection (Compressed) */}
+          <section className="bg-white border border-border-subtle rounded-lg shadow-sm">
+            <div className="p-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-tertiary/10 rounded-full flex items-center justify-center text-tertiary">
+                    <span className="material-symbols-outlined">account_circle</span>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-title-sm text-on-surface">{user?.googleEmail || "연결되지 않음"}</span>
+                      {isGoogleConnected ? (
+                        <span className="px-2 py-0.5 bg-tertiary/10 text-tertiary text-[10px] font-bold rounded uppercase flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 bg-tertiary rounded-full"></span>
+                          Connected
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 bg-error/10 text-error text-[10px] font-bold rounded uppercase flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 bg-error rounded-full"></span>
+                          Disconnected
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-secondary mt-0.5">
+                      {isGoogleConnected
+                        ? "Google Drive, Sheets, Calendar 연동이 활성화되어 있습니다."
+                        : "구글 계정을 연결하여 자동 동기화 대상을 설정할 수 있습니다."}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  {isGoogleConnected ? (
+                    <>
+                      <button onClick={onLogout} className="px-4 py-2 border border-border-subtle text-secondary text-body-sm font-medium rounded hover:bg-surface-container-low transition-colors">로그아웃</button>
+                      <button disabled={isSaving} onClick={handleSaveSettings} className="px-4 py-2 bg-primary-container text-white text-body-sm font-bold rounded hover:opacity-90 transition-opacity">
+                        {isSaving ? "저장 중..." : "연동 설정 저장"}
+                      </button>
+                      {saveStatus === "success" && <span className="text-tertiary text-sm">✓</span>}
+                    </>
+                  ) : (
+                    <button onClick={onGoogleLogin} className="px-4 py-2 bg-primary-container text-white text-body-sm font-bold rounded hover:opacity-90 transition-opacity">
+                      Google 계정으로 연결하기
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
 
-              <div className="mt-6 space-y-6">
-                <div>
-                  <label className="block text-sm font-bold text-secondary">Google Sheets 대상 스프레드시트</label>
-                  <div className="mt-2 flex items-center justify-between rounded-lg border border-border bg-surface-container-low px-4 py-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <FileSpreadsheet className="text-tertiary shrink-0" size={20} />
-                      <div className="min-w-0">
-                        <p className="text-sm font-bold text-text-heading truncate">{selectedSheetName}</p>
-                        {selectedSheetId && <p className="text-xs text-secondary truncate">ID: {selectedSheetId}</p>}
+          {/* SECTION 2: Connection Settings (Cards Grid) */}
+          {isGoogleConnected && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+              {/* Google Sheets Card */}
+              <div className="bg-white border border-border-subtle rounded-lg shadow-sm flex flex-col">
+                <div className="p-6 border-b border-border-subtle flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-green-50 rounded flex items-center justify-center">
+                      <span className="material-symbols-outlined text-green-600">description</span>
+                    </div>
+                    <div>
+                      <h3 className="font-title-sm text-title-sm text-on-surface">Google Sheets 연결</h3>
+                      <p className="text-xs text-secondary">방송 송출 로그 및 자산 리스트 저장소</p>
+                    </div>
+                  </div>
+                  <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase ${selectedSheetId ? "bg-tertiary/10 text-tertiary" : "bg-surface-container text-secondary"}`}>
+                    {selectedSheetId ? "Active" : "Inactive"}
+                  </span>
+                </div>
+                <div className="p-6 flex-1 space-y-4">
+                  <div className="p-4 border border-border-subtle rounded-lg bg-surface-container-low flex items-center justify-between">
+                    <div className="flex items-center gap-3 overflow-hidden">
+                      <span className="material-symbols-outlined text-green-600 shrink-0">description</span>
+                      <div className="truncate">
+                        <div className="text-body-sm font-bold text-on-surface truncate">{selectedSheetName}</div>
+                        <div className="text-[10px] text-secondary truncate">ID: {selectedSheetId || "설정 안 됨"}</div>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button onClick={() => setShowDriveExplorer(true)} variant="secondary" className="h-9 text-xs px-3">
-                        드라이브 탐색
-                      </Button>
-                      <Button onClick={() => setShowSheetModal(true)} variant="secondary" className="h-9 text-xs px-3">
-                        새로 만들기
-                      </Button>
+                    <div className="flex gap-2 shrink-0">
+                      <button onClick={() => setShowDriveExplorer(true)} className="px-3 py-1.5 border border-border-subtle rounded text-[11px] font-medium hover:bg-white transition-colors">드라이브 탐색</button>
+                      <button onClick={() => setShowSheetModal(true)} className="px-3 py-1.5 border border-border-subtle rounded text-[11px] font-medium hover:bg-white transition-colors">새로 만들기</button>
                     </div>
                   </div>
-                </div>
-
-                {/* 1. 방송일정 캘린더 */}
-                <div>
-                  <div className="flex items-center justify-between">
-                    <label className="block text-sm font-bold text-secondary">방송일정 캘린더 연동</label>
-                    <button
-                      className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
-                      onClick={() => {
-                        setCreatingCalendarType("broadcast");
-                        setShowCalendarModal(true);
-                      }}
-                    >
-                      <Plus size={14} />
-                      새로 만들기
-                    </button>
-                  </div>
-                  <div className="mt-2 flex gap-3">
-                    <div className="relative flex-1">
-                      <button
-                        type="button"
-                        disabled={isCalendarsLoading}
-                        onClick={() => {
-                          setShowCalendarDropdown(!showCalendarDropdown);
-                          setShowShipmentCalendarDropdown(false);
-                        }}
-                        className="w-full flex items-center justify-between rounded border border-border px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 text-left disabled:bg-surface-container-low"
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          {selectedCalendarId ? (
-                            <span
-                              className="h-3.5 w-3.5 rounded-full shrink-0 border border-black/10"
-                              style={{ backgroundColor: calendars.find(c => c.id === selectedCalendarId)?.backgroundColor || "#4285F4" }}
-                            />
-                          ) : (
-                            <span className="h-3.5 w-3.5 rounded-full bg-slate-200 shrink-0 border border-black/10" />
-                          )}
-                          <span className="truncate font-semibold text-text-heading">
-                            {selectedCalendarId
-                              ? calendars.find(c => c.id === selectedCalendarId)?.summary || selectedCalendarId
-                              : "동기화하지 않음"}
-                          </span>
-                        </div>
-                        {isCalendarsLoading ? (
-                          <RefreshCw className="animate-spin text-secondary shrink-0 ml-2" size={16} />
-                        ) : (
-                          <ChevronDown className="text-secondary shrink-0 ml-2" size={16} />
-                        )}
-                      </button>
-
-                      {showCalendarDropdown && (
-                        <>
-                          <div className="fixed inset-0 z-30" onClick={() => setShowCalendarDropdown(false)} />
-                          <ul className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto rounded border border-border bg-white py-1 shadow-lg z-40 divide-y divide-border-subtle">
-                            <li
-                              onClick={() => {
-                                setSelectedCalendarId("");
-                                setShowCalendarDropdown(false);
-                              }}
-                              className="flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-surface-container-low cursor-pointer"
-                            >
-                              <span className="h-3.5 w-3.5 rounded-full bg-slate-200 shrink-0 border border-black/10" />
-                              <span className="text-secondary font-semibold">동기화하지 않음</span>
-                            </li>
-                            {calendars.map((cal) => (
-                              <li
-                                key={cal.id}
-                                onClick={() => {
-                                  setSelectedCalendarId(cal.id);
-                                  setShowCalendarDropdown(false);
-                                }}
-                                className={`flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-surface-container-low cursor-pointer ${
-                                  selectedCalendarId === cal.id ? "bg-primary-soft/50 font-bold" : ""
-                                }`}
-                              >
-                                <span
-                                  className="h-3.5 w-3.5 rounded-full shrink-0 border border-black/10"
-                                  style={{ backgroundColor: cal.backgroundColor || "#4285F4" }}
-                                />
-                                <span className="truncate text-text-heading font-semibold">{cal.summary}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </>
-                      )}
-                    </div>
-                    <Button onClick={loadInitialData} variant="secondary">
-                      <RefreshCw size={16} />
-                    </Button>
-                  </div>
-                </div>
-
-                {/* 2. 출고일정 캘린더 */}
-                <div>
-                  <div className="flex items-center justify-between">
-                    <label className="block text-sm font-bold text-secondary">출고일정 캘린더 연동</label>
-                    <button
-                      className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
-                      onClick={() => {
-                        setCreatingCalendarType("shipment");
-                        setShowCalendarModal(true);
-                      }}
-                    >
-                      <Plus size={14} />
-                      새로 만들기
-                    </button>
-                  </div>
-                  <div className="mt-2 flex gap-3">
-                    <div className="relative flex-1">
-                      <button
-                        type="button"
-                        disabled={isCalendarsLoading}
-                        onClick={() => {
-                          setShowShipmentCalendarDropdown(!showShipmentCalendarDropdown);
-                          setShowCalendarDropdown(false);
-                        }}
-                        className="w-full flex items-center justify-between rounded border border-border px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 text-left disabled:bg-surface-container-low"
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          {selectedShipmentCalendarId ? (
-                            <span
-                              className="h-3.5 w-3.5 rounded-full shrink-0 border border-black/10"
-                              style={{ backgroundColor: calendars.find(c => c.id === selectedShipmentCalendarId)?.backgroundColor || "#4285F4" }}
-                            />
-                          ) : (
-                            <span className="h-3.5 w-3.5 rounded-full bg-slate-200 shrink-0 border border-black/10" />
-                          )}
-                          <span className="truncate font-semibold text-text-heading">
-                            {selectedShipmentCalendarId
-                              ? calendars.find(c => c.id === selectedShipmentCalendarId)?.summary || selectedShipmentCalendarId
-                              : "동기화하지 않음"}
-                          </span>
-                        </div>
-                        {isCalendarsLoading ? (
-                          <RefreshCw className="animate-spin text-secondary shrink-0 ml-2" size={16} />
-                        ) : (
-                          <ChevronDown className="text-secondary shrink-0 ml-2" size={16} />
-                        )}
-                      </button>
-
-                      {showShipmentCalendarDropdown && (
-                        <>
-                          <div className="fixed inset-0 z-30" onClick={() => setShowShipmentCalendarDropdown(false)} />
-                          <ul className="absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto rounded border border-border bg-white py-1 shadow-lg z-40 divide-y divide-border-subtle">
-                            <li
-                              onClick={() => {
-                                setSelectedShipmentCalendarId("");
-                                setShowShipmentCalendarDropdown(false);
-                              }}
-                              className="flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-surface-container-low cursor-pointer"
-                            >
-                              <span className="h-3.5 w-3.5 rounded-full bg-slate-200 shrink-0 border border-black/10" />
-                              <span className="text-secondary font-semibold">동기화하지 않음</span>
-                            </li>
-                            {calendars.map((cal) => (
-                              <li
-                                key={cal.id}
-                                onClick={() => {
-                                  setSelectedShipmentCalendarId(cal.id);
-                                  setShowShipmentCalendarDropdown(false);
-                                }}
-                                className={`flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-surface-container-low cursor-pointer ${
-                                  selectedShipmentCalendarId === cal.id ? "bg-primary-soft/50 font-bold" : ""
-                                }`}
-                              >
-                                <span
-                                  className="h-3.5 w-3.5 rounded-full shrink-0 border border-black/10"
-                                  style={{ backgroundColor: cal.backgroundColor || "#4285F4" }}
-                                />
-                                <span className="truncate text-text-heading font-semibold">{cal.summary}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </>
-                      )}
-                    </div>
-                    <Button onClick={loadInitialData} variant="secondary">
-                      <RefreshCw size={16} />
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="border-t border-border-subtle pt-6 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {saveStatus === "success" && (
-                      <span className="inline-flex items-center gap-1 text-sm font-bold text-tertiary">
-                        <CheckCircle2 size={16} /> 연동 설정이 성공적으로 저장되었습니다.
-                      </span>
-                    )}
-                    {saveStatus === "error" && (
-                      <span className="inline-flex items-center gap-1 text-sm font-bold text-error">
-                        <AlertCircle size={16} /> 설정 저장 중 오류가 발생했습니다.
-                      </span>
-                    )}
-                  </div>
-                  <Button disabled={isSaving} onClick={handleSaveSettings}>
-                    {isSaving ? "저장 중..." : "연동 설정 저장"}
-                  </Button>
                 </div>
               </div>
-            </Card>
-          ) : (
-            <Card className="p-8 text-center text-secondary">
-              <CloudOff className="mx-auto text-secondary/50 mb-4" size={40} />
-              <p className="text-sm">구글 계정을 연동하시면 상세한 Sheets 및 Calendar 연동 대상을 수동으로 설정할 수 있습니다.</p>
-            </Card>
+
+              {/* Google Calendar Card */}
+              <div className="bg-white border border-border-subtle rounded-lg shadow-sm flex flex-col">
+                <div className="p-6 border-b border-border-subtle flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-50 rounded flex items-center justify-center">
+                      <span className="material-symbols-outlined text-broadcast-blue">calendar_month</span>
+                    </div>
+                    <div>
+                      <h3 className="font-title-sm text-title-sm text-on-surface">Google Calendar 연결</h3>
+                      <p className="text-xs text-secondary">방송 편성 및 예약 자동 등록</p>
+                    </div>
+                  </div>
+                  <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase ${(selectedCalendarId || selectedShipmentCalendarId) ? "bg-tertiary/10 text-tertiary" : "bg-surface-container text-secondary"}`}>
+                    {(selectedCalendarId || selectedShipmentCalendarId) ? "Active" : "Inactive"}
+                  </span>
+                </div>
+                <div className="p-6 flex-1 space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="font-label-caps text-secondary text-[10px] uppercase">방송일정 캘린더 연동</label>
+                      <button onClick={() => { setCreatingCalendarType("broadcast"); setShowCalendarModal(true); }} className="text-primary text-[10px] font-bold hover:underline">+ 새로 만들기</button>
+                    </div>
+                    <div className="flex gap-2">
+                      <select 
+                        value={selectedCalendarId}
+                        onChange={(e) => setSelectedCalendarId(e.target.value)}
+                        className="flex-1 border-border-subtle rounded bg-white px-3 py-2 text-body-sm focus:border-primary-container focus:ring-0"
+                      >
+                        <option value="">동기화하지 않음</option>
+                        {calendars.map(cal => (
+                          <option key={cal.id} value={cal.id}>{cal.summary}</option>
+                        ))}
+                      </select>
+                      <button onClick={loadInitialData} disabled={isCalendarsLoading} className="p-2 border border-border-subtle rounded hover:bg-surface-container-low flex items-center justify-center">
+                        <span className={`material-symbols-outlined text-[20px] ${isCalendarsLoading ? "animate-spin" : ""}`}>sync</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="font-label-caps text-secondary text-[10px] uppercase">출고일정 캘린더 연동</label>
+                      <button onClick={() => { setCreatingCalendarType("shipment"); setShowCalendarModal(true); }} className="text-primary text-[10px] font-bold hover:underline">+ 새로 만들기</button>
+                    </div>
+                    <div className="flex gap-2">
+                      <select 
+                        value={selectedShipmentCalendarId}
+                        onChange={(e) => setSelectedShipmentCalendarId(e.target.value)}
+                        className="flex-1 border-border-subtle rounded bg-white px-3 py-2 text-body-sm focus:border-primary-container focus:ring-0"
+                      >
+                        <option value="">동기화하지 않음</option>
+                        {calendars.map(cal => (
+                          <option key={cal.id} value={cal.id}>{cal.summary}</option>
+                        ))}
+                      </select>
+                      <button onClick={loadInitialData} disabled={isCalendarsLoading} className="p-2 border border-border-subtle rounded hover:bg-surface-container-low flex items-center justify-center">
+                        <span className={`material-symbols-outlined text-[20px] ${isCalendarsLoading ? "animate-spin" : ""}`}>sync</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
 
-          <Card>
-            <div className="border-b border-border-subtle px-6 py-5">
-              <h3 className="text-lg font-bold">동기화 이력</h3>
-            </div>
-            <div className="divide-y divide-border-subtle">
-              {syncLogs.length === 0 ? (
-                <div className="flex items-center justify-center p-8 text-sm text-secondary">
-                  동기화 이력이 없습니다.
-                </div>
-              ) : (
-                syncLogs.map((log) => (
-                  <div className="grid grid-cols-[150px_1fr_120px] gap-4 px-6 py-4" key={log.id}>
-                    <span className="text-sm font-bold text-secondary">
-                      {log.target === "sheets" ? "Sheets" : "Calendar"}
-                    </span>
-                    <div>
-                      <p className="text-sm font-bold">{log.message}</p>
-                      <p className="mt-1 text-xs text-secondary">{formatDateTime(log.createdAt)}</p>
-                    </div>
-                    <span className="text-right text-xs font-bold uppercase text-secondary">
-                      {log.status}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </Card>
-
-          <Card>
-            <div className="border-b border-border-subtle px-6 py-5 flex items-center justify-between">
+          {/* SECTION 3: Data Migration (CSV) - Moved up */}
+          <section className="bg-white border border-border-subtle rounded-lg shadow-sm">
+            <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h3 className="text-lg font-bold">기존 데이터 마이그레이션</h3>
-                <p className="mt-1 text-xs text-secondary">이전 시스템의 구글 시트를 CSV로 다운받아 일괄 등록합니다.</p>
+                <h3 className="font-title-sm text-on-surface">기존 데이터 마이그레이션</h3>
+                <p className="text-xs text-secondary mt-0.5">이전 시스템의 구글 시트를 CSV로 다운받아 일괄 등록합니다.</p>
               </div>
-              <Button onClick={() => setShowMigrationModal(true)}>
+              <button onClick={() => setShowMigrationModal(true)} className="px-6 py-2.5 bg-primary-container text-white text-body-sm font-bold rounded shadow-sm hover:opacity-90 transition-opacity flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px]">upload_file</span>
                 CSV 업로드하기
-              </Button>
+              </button>
             </div>
-          </Card>
+          </section>
+
+          {/* SECTION 4: Synchronization History */}
+          <section className="bg-white border border-border-subtle rounded-lg shadow-sm">
+            <div className="px-6 py-4 border-b border-border-subtle flex justify-between items-center">
+              <h3 className="font-title-sm text-on-surface">동기화 이력</h3>
+              <button onClick={refreshData} className="text-primary text-[11px] font-bold flex items-center gap-1 hover:underline">
+                <span className="material-symbols-outlined text-[16px]">refresh</span>
+                새로고침
+              </button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead className="bg-surface-container-low">
+                  <tr>
+                    <th className="px-6 py-3 font-label-caps text-secondary text-[10px] uppercase border-b border-border-subtle">Type</th>
+                    <th className="px-6 py-3 font-label-caps text-secondary text-[10px] uppercase border-b border-border-subtle">Activity</th>
+                    <th className="px-6 py-3 font-label-caps text-secondary text-[10px] uppercase border-b border-border-subtle">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-subtle">
+                  {syncLogs.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="px-6 py-8 text-center text-body-sm text-secondary">
+                        동기화 이력이 없습니다.
+                      </td>
+                    </tr>
+                  ) : (
+                    syncLogs.map((log) => (
+                      <tr key={log.id} className="hover:bg-surface-container-lowest transition-colors">
+                        <td className="px-6 py-4 font-data-tabular text-body-sm text-secondary">
+                          {log.target === "sheets" ? "Sheets" : "Calendar"}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-body-sm font-bold text-on-surface">{log.message}</div>
+                          <div className="text-[10px] text-secondary mt-0.5">{formatDateTime(log.createdAt)}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`text-[10px] font-bold ${log.status === "SUCCESS" ? "text-tertiary" : "text-error"}`}>
+                            {log.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <div className="p-4 border-t border-border-subtle bg-surface-container-low/50 text-center">
+              <button className="text-secondary font-title-sm text-body-sm hover:text-on-surface transition-colors flex items-center justify-center gap-2 mx-auto">
+                더 보기
+                <span className="material-symbols-outlined text-[18px]">expand_more</span>
+              </button>
+            </div>
+          </section>
         </div>
       </div>
 

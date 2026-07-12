@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>계정 상태 - Luminous Broadcast</title>
+<script type="text/javascript" nonce="6aff627dcad24557b6efbde13d2" src="//local.adguard.org?ts=1783820398910&amp;type=content-script&amp;dmn=contribution.usercontent.google.com&amp;url=https%3A%2F%2Fcontribution.usercontent.google.com%2Fdownload%3Fc%3DCgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1NjYwMDg1MWE5ODEwMDMwMWM5MjAyMDdhNDQ4EgsSBxDQkpmIlA4YAZIBJAoKcHJvamVjdF9pZBIWQhQxMTgxODc4MzI5OTI1NzYwNzYxNw%26filename%3D%26opi%3D89354086&amp;app=chrome.exe&amp;css=3&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="6aff627dcad24557b6efbde13d2" src="//local.adguard.org?ts=1783820398910&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "primary-container": "#f06a6a",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#ffb3b0",
+                        "secondary": "#5b5f64",
+                        "on-primary-fixed-variant": "#881d24",
+                        "on-tertiary-container": "#003522",
+                        "surface-container": "#efedec",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f2f0ef",
+                        "on-secondary-container": "#5f6368",
+                        "error-container": "#ffdad6",
+                        "surface": "#fbf9f8",
+                        "on-background": "#1b1c1b",
+                        "text-body": "#5F6368",
+                        "on-tertiary-fixed": "#002113",
+                        "tertiary-fixed-dim": "#58dea3",
+                        "surface-bright": "#fbf9f8",
+                        "surface-variant": "#e4e2e1",
+                        "secondary-fixed-dim": "#c3c7cc",
+                        "on-primary": "#ffffff",
+                        "primary": "#a93539",
+                        "tertiary-container": "#00aa74",
+                        "primary-fixed-dim": "#ffb3b0",
+                        "on-tertiary": "#ffffff",
+                        "surface-card": "#FFFFFF",
+                        "primary-fixed": "#ffdad8",
+                        "outline-variant": "#debfbe",
+                        "inverse-surface": "#303030",
+                        "border-subtle": "#E5E1E0",
+                        "on-primary-fixed": "#410006",
+                        "surface-dim": "#dbdad9",
+                        "on-primary-container": "#62000e",
+                        "secondary-container": "#dde0e6",
+                        "outline": "#8b7170",
+                        "text-heading": "#202124",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed": "#77fbbd",
+                        "tertiary": "#006c48",
+                        "on-secondary-fixed": "#181c20",
+                        "surface-container-low": "#f5f3f2",
+                        "on-secondary-fixed-variant": "#43474c",
+                        "background": "#fbf9f8",
+                        "surface-container-highest": "#e4e2e1",
+                        "on-surface-variant": "#574140",
+                        "surface-main": "#FBF9F8",
+                        "broadcast-blue": "#1A73E8",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-surface": "#1b1c1b",
+                        "secondary-fixed": "#dfe3e8",
+                        "surface-tint": "#a93539",
+                        "surface-container-high": "#e9e8e7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "row-height-standard": "56px",
+                        "margin-page": "2rem",
+                        "container-max-width": "1600px",
+                        "sidebar-width": "260px",
+                        "row-height-dense": "40px",
+                        "gutter": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-sm": ["Hanken Grotesk"],
+                        "data-tabular": ["Inter"],
+                        "title-sm": ["Hanken Grotesk"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "data-tabular": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                        "title-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            background-color: #FBF9F8;
+            color: #1b1c1b;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e5e1e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d1cdcc;
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- Top AppBar -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface dark:bg-on-surface border-b border-border-subtle dark:border-outline flex justify-between items-center w-full px-gutter h-row-height-standard transition-colors duration-200">
+<div class="flex items-center gap-4">
+<h1 class="font-display-lg text-display-lg text-primary dark:text-primary-fixed font-extrabold tracking-tight">Luminous Broadcast</h1>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest p-2 rounded transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest p-2 rounded transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest p-2 rounded transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-border-subtle">
+<img class="w-full h-full object-cover" data-alt="User Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9XZPX5FuXxPqAlOX6XDgx0_RGhm_ftnUR827iP92GkZRYTtxGavyR2BCKjOmruulYYG2HRb6AEE8yqZYx-LvJq-7RkBvhbg_YEvnm3RCvLA2LYfrWmn4fNDsT6kDm2CJzseTBidwBS3RexkkdcBMexXmBvQA6EGhOo8jEsPe6xaXpZdMF748h9oVJdAfSQd9uf-CC0csm3V-w843E1Ogfi1whKK8mm_kMBIrzJThHKi-KxlUwhIIZdQ"/>
+</div>
+</div>
+</header>
+<!-- Side Navigation -->
+<aside class="fixed left-0 top-0 h-full w-sidebar-width bg-surface-main dark:bg-on-surface border-r border-border-subtle dark:border-outline flex flex-col pt-24 pb-margin-page z-40 transition-all duration-200 ease-in-out">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" data-icon="settings_input_antenna">settings_input_antenna</span>
+</div>
+<div>
+<div class="font-headline-md text-headline-md text-on-surface dark:text-inverse-on-surface">Broadcast Ops</div>
+<div class="text-xs text-secondary opacity-70">Enterprise Management</div>
+</div>
+</div>
+</div>
+<nav class="flex-1">
+<ul class="space-y-1">
+<li>
+<a class="relative flex items-center px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="font-title-sm text-title-sm">대시보드</span>
+</a>
+</li>
+<li>
+<a class="relative flex items-center px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="calendar_today">calendar_today</span>
+<span class="font-title-sm text-title-sm">일정 등록</span>
+</a>
+</li>
+<li>
+<a class="relative flex items-center px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="video_library">video_library</span>
+<span class="font-title-sm text-title-sm">검색 목록</span>
+</a>
+</li>
+<li>
+<a class="relative flex items-center px-6 py-3 text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="handshake">handshake</span>
+<span class="font-title-sm text-title-sm">홈쇼핑 업체 관리</span>
+</a>
+</li>
+<li>
+<a class="relative flex items-center px-6 py-3 border-l-4 border-primary bg-primary/5 text-primary font-bold transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="account_circle" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+<span class="font-title-sm text-title-sm">계정 상태</span>
+</a>
+</li>
+</ul>
+</nav>
+<div class="mt-auto px-6 space-y-1 border-t border-border-subtle pt-6">
+<a class="flex items-center py-2 text-secondary hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="contact_support">contact_support</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+<a class="flex items-center py-2 text-secondary hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-[20px]" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-sidebar-width pt-24 p-margin-page max-w-container-max-width">
+<!-- Page Header -->
+<div class="mb-8">
+<h2 class="font-display-lg text-display-lg text-on-surface mb-2">계정 상태 관리</h2>
+<p class="text-secondary font-body-md">Google 서비스 연동 및 방송 자동화 데이터를 관리합니다.</p>
+</div>
+<div class="space-y-gutter">
+<!-- SECTION 1: Google Account Connection (Compressed) -->
+<section class="bg-white border border-border-subtle rounded-lg shadow-sm">
+<div class="p-6">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-tertiary/10 rounded-full flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-title-sm text-on-surface">skymaker78.dev@gmail.com</span>
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary text-[10px] font-bold rounded uppercase flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-tertiary rounded-full"></span>
+                                        Connected
+                                    </span>
+</div>
+<p class="text-xs text-secondary mt-0.5">Google Drive, Sheets, Calendar 연동이 활성화되어 있습니다.</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 border border-border-subtle text-secondary text-body-sm font-medium rounded hover:bg-surface-container-low transition-colors">로그아웃</button>
+<button class="px-4 py-2 bg-primary-container text-white text-body-sm font-bold rounded hover:opacity-90 transition-opacity">연동 설정 저장</button>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: Connection Settings (Cards Grid) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<!-- Google Sheets Card -->
+<div class="bg-white border border-border-subtle rounded-lg shadow-sm flex flex-col">
+<div class="p-6 border-b border-border-subtle flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-green-50 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600" data-icon="description">description</span>
+</div>
+<div>
+<h3 class="font-title-sm text-title-sm text-on-surface">Google Sheets 연결</h3>
+<p class="text-xs text-secondary">방송 송출 로그 및 자산 리스트 저장소</p>
+</div>
+</div>
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary text-[10px] font-bold rounded uppercase">Active</span>
+</div>
+<div class="p-6 flex-1 space-y-4">
+<div class="p-4 border border-border-subtle rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-3 overflow-hidden">
+<span class="material-symbols-outlined text-green-600 shrink-0" data-icon="description">description</span>
+<div class="truncate">
+<div class="text-body-sm font-bold text-on-surface truncate">1pZVIT9OrlrTmtOkVVnllRIyG4OJ3v5ZXZd20d0fIdDY</div>
+<div class="text-[10px] text-secondary">ID: 1pZVIT9OrlrTmtOkVVnllRIyG4OJ3v5ZXZd20d0fIdDY</div>
+</div>
+</div>
+<div class="flex gap-2 shrink-0">
+<button class="px-3 py-1.5 border border-border-subtle rounded text-[11px] font-medium hover:bg-white transition-colors">드라이브 탐색</button>
+<button class="px-3 py-1.5 border border-border-subtle rounded text-[11px] font-medium hover:bg-white transition-colors">새로 만들기</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Calendar Card -->
+<div class="bg-white border border-border-subtle rounded-lg shadow-sm flex flex-col">
+<div class="p-6 border-b border-border-subtle flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-blue-50 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-broadcast-blue" data-icon="calendar_month">calendar_month</span>
+</div>
+<div>
+<h3 class="font-title-sm text-title-sm text-on-surface">Google Calendar 연결</h3>
+<p class="text-xs text-secondary">방송 편성 및 예약 자동 등록</p>
+</div>
+</div>
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary text-[10px] font-bold rounded uppercase">Active</span>
+</div>
+<div class="p-6 flex-1 space-y-4">
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<label class="font-label-caps text-secondary text-[10px] uppercase">방송일정 캘린더 연동</label>
+<button class="text-primary text-[10px] font-bold hover:underline">+ 새로 만들기</button>
+</div>
+<div class="flex gap-2">
+<select class="flex-1 border-border-subtle rounded bg-white px-3 py-2 text-body-sm focus:border-primary-container focus:ring-0">
+<option>홈쇼핑 방송 일정</option>
+</select>
+<button class="p-2 border border-border-subtle rounded hover:bg-surface-container-low"><span class="material-symbols-outlined text-[20px]" data-icon="sync">sync</span></button>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<label class="font-label-caps text-secondary text-[10px] uppercase">출고일정 캘린더 연동</label>
+<button class="text-primary text-[10px] font-bold hover:underline">+ 새로 만들기</button>
+</div>
+<div class="flex gap-2">
+<select class="flex-1 border-border-subtle rounded bg-white px-3 py-2 text-body-sm focus:border-primary-container focus:ring-0">
+<option>홈쇼핑 출고 캘린더</option>
+</select>
+<button class="p-2 border border-border-subtle rounded hover:bg-surface-container-low"><span class="material-symbols-outlined text-[20px]" data-icon="sync">sync</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 3: Data Migration (CSV) - Moved up -->
+<section class="bg-white border border-border-subtle rounded-lg shadow-sm">
+<div class="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<h3 class="font-title-sm text-on-surface">기존 데이터 마이그레이션</h3>
+<p class="text-xs text-secondary mt-0.5">이전 시스템의 구글 시트를 CSV로 다운받아 일괄 등록합니다.</p>
+</div>
+<button class="px-6 py-2.5 bg-primary-container text-white text-body-sm font-bold rounded shadow-sm hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="upload_file">upload_file</span>
+                        CSV 업로드하기
+                    </button>
+</div>
+</section>
+<!-- SECTION 4: Synchronization History -->
+<section class="bg-white border border-border-subtle rounded-lg shadow-sm">
+<div class="px-6 py-4 border-b border-border-subtle flex justify-between items-center">
+<h3 class="font-title-sm text-on-surface">동기화 이력</h3>
+<button class="text-primary text-[11px] font-bold flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-[16px]" data-icon="refresh">refresh</span>
+                        새로고침
+                    </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-6 py-3 font-label-caps text-secondary text-[10px] uppercase border-b border-border-subtle">Type</th>
+<th class="px-6 py-3 font-label-caps text-secondary text-[10px] uppercase border-b border-border-subtle">Activity</th>
+<th class="px-6 py-3 font-label-caps text-secondary text-[10px] uppercase border-b border-border-subtle">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle">
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-6 py-4 font-data-tabular text-body-sm text-secondary">Calendar</td>
+<td class="px-6 py-4">
+<div class="text-body-sm font-bold text-on-surface">Google Calendar 출고 일정 업데이트 완료</div>
+<div class="text-[10px] text-secondary mt-0.5">07. 10. 오후 08:14</div>
+</td>
+<td class="px-6 py-4"><span class="text-[10px] font-bold text-tertiary">SUCCESS</span></td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-6 py-4 font-data-tabular text-body-sm text-secondary">Calendar</td>
+<td class="px-6 py-4">
+<div class="text-body-sm font-bold text-on-surface">Google Calendar 방송 일정 업데이트 완료</div>
+<div class="text-[10px] text-secondary mt-0.5">07. 10. 오후 08:14</div>
+</td>
+<td class="px-6 py-4"><span class="text-[10px] font-bold text-tertiary">SUCCESS</span></td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-6 py-4 font-data-tabular text-body-sm text-secondary">Sheets</td>
+<td class="px-6 py-4">
+<div class="text-body-sm font-bold text-on-surface">Google Sheets 업데이트 완료</div>
+<div class="text-[10px] text-secondary mt-0.5">07. 10. 오후 08:14</div>
+</td>
+<td class="px-6 py-4"><span class="text-[10px] font-bold text-tertiary">SUCCESS</span></td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-6 py-4 font-data-tabular text-body-sm text-secondary">Calendar</td>
+<td class="px-6 py-4">
+<div class="text-body-sm font-bold text-on-surface">Google Calendar 출고 일정 생성 완료</div>
+<div class="text-[10px] text-secondary mt-0.5">07. 10. 오후 08:02</div>
+</td>
+<td class="px-6 py-4"><span class="text-[10px] font-bold text-tertiary">SUCCESS</span></td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-6 py-4 font-data-tabular text-body-sm text-secondary">Calendar</td>
+<td class="px-6 py-4">
+<div class="text-body-sm font-bold text-on-surface">Google Calendar 방송 일정 생성 완료</div>
+<div class="text-[10px] text-secondary mt-0.5">07. 10. 오후 08:02</div>
+</td>
+<td class="px-6 py-4"><span class="text-[10px] font-bold text-tertiary">SUCCESS</span></td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="px-6 py-4 font-data-tabular text-body-sm text-secondary">Sheets</td>
+<td class="px-6 py-4">
+<div class="text-body-sm font-bold text-on-surface">Google Sheets 행 작성 완료</div>
+<div class="text-[10px] text-secondary mt-0.5">07. 10. 오후 08:02</div>
+</td>
+<td class="px-6 py-4"><span class="text-[10px] font-bold text-tertiary">SUCCESS</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-border-subtle bg-surface-container-low/50 text-center">
+<button class="text-secondary font-title-sm text-body-sm hover:text-on-surface transition-colors flex items-center justify-center gap-2 mx-auto">
+                        더 보기
+                        <span class="material-symbols-outlined text-[18px]" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+</section>
+</div>
+<!-- Footer Help Section -->
+<footer class="mt-12 pt-8 border-t border-border-subtle flex flex-col md:flex-row justify-between items-center gap-4 text-secondary">
+<div class="text-xs">
+                © 2024 Luminous Broadcast Operations. All rights reserved.
+            </div>
+<div class="flex gap-6 text-xs uppercase font-label-caps tracking-widest">
+<a class="hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="hover:text-primary transition-colors" href="#">API Status</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+</div>
+</footer>
+</main>
+</body></html>

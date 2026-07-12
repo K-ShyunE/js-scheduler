@@ -51,13 +51,11 @@ export function MigrationModal({
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [results, setResults] = useState<{ success: number; failed: number } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const processFile = (file: File) => {
     Papa.parse<Record<string, string>>(file, {
       header: true,
       skipEmptyLines: true,
@@ -81,6 +79,34 @@ export function MigrationModal({
         setColumnMap(newMap);
       },
     });
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    processFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    const file = e.dataTransfer.files?.[0];
+    if (file && (file.type === "text/csv" || file.name.endsWith(".csv"))) {
+      processFile(file);
+    } else if (file) {
+      alert("CSV 파일만 업로드 가능합니다.");
+    }
   };
 
   const allRequiredMapped = REQUIRED_FIELDS.filter(f => f.required).every(f => !!columnMap[f.key]);
@@ -175,8 +201,15 @@ export function MigrationModal({
 
         <div className="mt-6 flex-1 overflow-y-auto pr-2">
           {!csvData.length ? (
-            <div className="border-2 border-dashed border-border-subtle rounded-xl p-12 text-center">
-              <UploadCloud className="mx-auto text-secondary mb-4" size={48} />
+            <div 
+              className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors ${
+                isDragging ? "border-primary bg-primary/5" : "border-border-subtle hover:border-primary/50"
+              }`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <UploadCloud className={`mx-auto mb-4 transition-colors ${isDragging ? "text-primary" : "text-secondary"}`} size={48} />
               <h4 className="text-lg font-bold text-text-heading">CSV 파일 업로드</h4>
               <p className="mt-2 text-sm text-secondary mb-6">
                 구글 시트나 엑셀에서 "CSV(쉼표로 구분)" 형식으로 저장한 파일을 선택해주세요.<br/>
